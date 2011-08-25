@@ -9,7 +9,11 @@
 		{% endfor %}
 	</ul>
 
-	<a class="history ajax" rel="#pages" href="{% url stratus-history-file repo_name branch_name path %}" >history</a>
+	<p class="file_tools">
+		<a class="history ajax" rel="#pages" href="{% url stratus-history-file repo_name branch_name path %}" >history</a>
+		<a href="{% url stratus-get-file repo_name branch_name path %}" target="new" class="raw">raw</a>
+	</p>
+	
 	<h1>{{path}}</h1>
 
 	{% if result_msg %}
@@ -17,7 +21,7 @@
 	{% endif %}
 
 	<div class="edit_file">
-		<a href="{% url stratus-get-file repo_name branch_name path %}" target="new" class="raw">raw</a>
+		
 	{% if file_meta.mime_type == "text" or file_meta.mime_type == "application"  %}
 	  	{% include "stratus/_edit_text.html" %}
 	{% else %}
