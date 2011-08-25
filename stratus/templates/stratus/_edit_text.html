@@ -2,11 +2,11 @@
 
 {# <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}stratus/python-complete.js"></script> #}
 {% if file_meta and file_meta.type != "text/plain" %}
-	<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}stratus/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
+	<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
 {% endif %}
 
 {% if file_meta.type == "css" or file_meta.type == "html" %}
-<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}stratus/zen-textarea/zen_textarea.min.js"></script>	
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/zen-textarea/zen_textarea.min.js"></script>	
 {% endif %}
 
 <script type="text/javascript"> 

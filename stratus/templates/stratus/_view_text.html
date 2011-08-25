@@ -2,7 +2,7 @@
 <textarea id="id_file_source" cols="30" rows="10">{{ file_source }}</textarea>
 
 {% if file_meta and file_meta.type != "text/plain" %}
-	<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}stratus/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
+	<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
 {% endif %}
 
 <script > 

@@ -12,6 +12,7 @@ def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
     
     repo = get_repo( repo_name )
     commit, tree = get_commit_tree(repo, commit_sha)
+    the_tree = tree
     dir_path = path.split("/")
 
     if commit_sha:
@@ -22,10 +23,13 @@ def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
     if path:
         if path[-1:] == "/":
             path = path[:-1]
-        try:
-            tree = tree[path]
-        except AttributeError:
-            tree = tree[dir_path[:-1]]
+
+        the_tree = tree[path]
+        if the_tree.type != "tree":
+            if len(dir_path) == 1:
+                the_tree = tree
+            else:
+                the_tree = tree[dir_path[:-1]]
     
     if request.method == 'POST':
         form = FileUploadForm(request.POST, request.FILES)
@@ -45,7 +49,7 @@ def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
         branch_name = branch,
         commit = commit,
         upload_form = form,
-        tree = tree.list_traverse(depth = 1),
+        tree = the_tree.list_traverse(depth = 1),
         breadcrumbs = make_crumbs(path),
         dir_path = dir_path,
     )

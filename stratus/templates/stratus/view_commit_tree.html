@@ -1,0 +1,9 @@
+{% extends "stratus/stratus_base.html" %}{% load commit_tags %}
+
+
+{% block git_content %}
+<div class="page">
+{% include "stratus/_view_commit_tree.html" %}
+</div>
+{% endblock %}
+

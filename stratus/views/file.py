@@ -1,4 +1,4 @@
-
+from django.http import  HttpResponse, Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -297,6 +297,29 @@ def delete(request, repo_name, branch, path ):
         'stratus/delete_file.html', 
         context)
 
+@login_required
+def get(request, repo_name, branch, path, commit_sha=None,):
+    """
+    get file from git tree
+    """
+
+    if path in FILE_BLACK_LIST:
+        raise Http404
+    
+    repo = get_repo( repo_name )
+    commit, tree = get_commit_tree( repo, commit_sha )
+
+    try:
+        tree = tree[path]
+    except KeyError:
+        raise Http404
+
+    if not tree.type  is "blob":
+        raise Http404
+
+    return HttpResponse(tree.stream_data[3], mimetype=tree.mime)
+
+@login_required
 def rename(request, repo_name, branch, file_path):
 
     if request.method == 'POST':

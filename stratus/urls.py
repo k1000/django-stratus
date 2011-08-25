@@ -19,6 +19,9 @@ urlpatterns = patterns('stratus.views.file',
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/(?P<commit_sha>[a-z0-9\-_]+)/view/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
         "view", name='stratus-view-file'),
+
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/(?P<commit_sha>[a-z0-9\-_]+)/get/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
+        "get", name='stratus-get-file'),
 )
 
 urlpatterns += patterns('stratus.views.tree',
