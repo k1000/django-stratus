@@ -1,0 +1,12 @@
+
+	<h1>"{{ query }}" found in {{ found_files|length }} files. </h1>
+	<ul class="list">
+	{% for file_name in found_files %}
+		<li><a href="{% url stratus-edit-file repo_name branch_name file_name %}" class="ajax" rel="#pages" >{{ file_name }}</a></li>
+	{% endfor %}
+	</ul>
+
+	<form action="{% url stratus-replace repo_name branch_name %}" method="post">
+		<p>Replace "<strong>{{ query }}</strong>" with <input type="text" />
+		<button>REPLACE</button></p>
+	</form>
