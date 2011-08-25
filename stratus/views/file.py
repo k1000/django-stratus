@@ -1,3 +1,5 @@
+import os
+
 from django.http import  HttpResponse, Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -35,7 +37,7 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
     if request.method == 'POST':
         form = FileUploadForm( request.POST, request.FILES )
         if form.is_valid():
-            repo = Repo(REPOS[repo_name])
+            repo = get_repo( repo_name )
 
             file_source = form.cleaned_data["file_source"]
             write_file(file_path, file_source )
@@ -75,17 +77,17 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
         if form.is_valid():
             dir_path = form.cleaned_data["dir_path"] #!!! FIX security
             #TODO check if file exist allready
-            repo = Repo(REPOS[repo_name])
+            repo = get_repo( repo_name )
 
             file_source = form.cleaned_data["file_source"]
-            path = os.path.join( dir_path, file_source["name"] )
-            write_file(file_path, file_source )
+            path = os.path.join( dir_path, file_source.name )
+            write_file(path, file_source )
 
-            msg = form.cleaned_data["message"]
+            msg = "'%s' created" % path 
             result_msg = mk_commit(repo, msg, path )
             messages.success(request, result_msg )
 
-            return redirect('stratus-tree-view', repo_name, branch, dir_path  )
+            #return redirect('stratus-tree-view', repo_name, branch, dir_path  )
         else:
             result_msg = MSG_COMMIT_ERROR
     else:
@@ -298,7 +300,7 @@ def delete(request, repo_name, branch, path ):
         context)
 
 @login_required
-def get(request, repo_name, branch, path, commit_sha=None,):
+def get_file(request, repo_name, branch, path, commit_sha="" ):
     """
     get file from git tree
     """
@@ -317,7 +319,7 @@ def get(request, repo_name, branch, path, commit_sha=None,):
     if not tree.type  is "blob":
         raise Http404
 
-    return HttpResponse(tree.stream_data[3], mimetype=tree.mime)
+    return HttpResponse(tree.data_stream.read(), mimetype=tree.mime_type)
 
 @login_required
 def rename(request, repo_name, branch, file_path):
