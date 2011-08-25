@@ -84,15 +84,32 @@ $(document).ready( function(){
 	})
 
 	// ----------------- FORMS --------------------
-	$('form').delegate('button', 'click', function(event) {
+	$('form.ajax').delegate('button', 'click', function(event) {
 		event.preventDefault();
 		var self = $(this);
 		var form = self.parents("form");
 		var url = form.attr("action");
 		var send_data = form.serialize();
-		$.post(url, send_data, function(data) {
-			alert( data )
-		}, "json")
+		var rel = form.attr("rel");
+		pages.hide_current();
+		/*$.post(method, url, send_data, function(data) {
+			pages.new_page( url, data.html )
+			var tab_text = $(data.html).find("h1").text().replace('"', "");
+			tabs.mk_tab(url, tab_text);
+		}, "json")*/
+		$.ajax({
+		   type: form.attr("method"),
+		   url: url,
+		   data: form.serialize(),
+		   dataType: "json",
+		   success: function(data){
+		   		if (  rel == "#pages") {
+		   			pages.new_page( url, data.html )
+					var tab_text = $(data.html).find("h1").text().replace('"', "");
+					tabs.mk_tab(url, tab_text);
+		   		}	
+		   }
+		});
 	})
 })
 

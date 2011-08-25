@@ -58,6 +58,9 @@ urlpatterns += patterns('stratus.views.meta',
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/search/$', 
         "search", name='stratus-search'),
 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/replace/$', 
+        "replace", name='stratus-replace'),
+
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/$', 
         "branches", name='stratus-branches'),
 

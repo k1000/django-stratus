@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from _view_helpers import mix_response, make_crumbs, error_view
-from _git_helpers import get_repo, get_commit_tree, get_diff
-from _os_helpers import file_type_from_mime
+from _git_helpers import get_repo, get_commit_tree, get_diff, mk_commit
+from _os_helpers import file_type_from_mime, write_file, handle_uploaded_file
 
 from stratus.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW
 from stratus.settings import FILE_BLACK_LIST, STRATUS_MEDIA_URL, EDITABLE_MIME_TYPES

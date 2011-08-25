@@ -3,6 +3,9 @@ from django.http import Http404
 from stratus.views._view_helpers import error_view
 from stratus.settings import REPOS, REPO_ITEMS_IN_PAGE
 
+MSG_COMMIT_ERROR = "There were problems with making commit"
+MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
+
 def mk_commit(repo, message, path ):
     git = repo.git
     #index = repo.index 

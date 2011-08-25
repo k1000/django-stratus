@@ -9,16 +9,14 @@
     at {{ branch_name }} branch 
 </h1>
 
-{% if commits %}
-    <p class="pager">
-        {% if previous_page > -1 %}
-            <a href="{% url stratus-log repo_name branch_name %}?page={{ previous_page }}" class="previous button ajax" rel="current" >PREVIOUS</a>
-        {% endif %}
-        <a href="{% url stratus-log repo_name branch_name %}?page={{ next_page }}" class="next button ajax" rel="current" >NEXT</a>
-    </p>
-{% else %}
-    <h2>No commits yet.</h2>
-{% endif %}
+<p class="pager">
+    {% if previous_page > -1 %}
+        <a href="{% url stratus-log repo_name branch_name %}?page={{ previous_page }}" class="previous button ajax" rel="current" >PREVIOUS</a>
+    {% endif %}
+    {% if commits|length > 0 %}
+    <a href="{% url stratus-log repo_name branch_name %}?page={{ next_page }}" class="next button ajax" rel="current" >NEXT</a>
+    {% endif %}
+</p>
 
 <div class="commits">
 

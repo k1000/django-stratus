@@ -1,8 +1,9 @@
 import git
 import stratus
 from django.utils import simplejson
+from django.core.context_processors import csrf
 #import json
-
+from django.template import RequestContext, TemplateDoesNotExist
 from django.template.response import TemplateResponse
 from django.template.loader import render_to_string, get_template
 from django.http import  HttpResponse
@@ -21,16 +22,19 @@ def to_json(python_object):
 
     if isinstance(python_object, stratus.forms.FileUploadForm ):
         return python_object.as_p()
+    
     return None
     #raise TypeError(repr(python_object) + ' is not JSON serializable')
 
-def partial_json_convert( template_name, context ):
+def partial_json_convert( request, template_name, context ):
     partial_prefix = "_"
     tmpl_dir = template_name.split("/")
         
     partial_template_path = "/".join( [ tmpl_dir[:-1][0], "%s%s" % (partial_prefix, tmpl_dir[-1:][0]) ] )
+
+    
     try:
-        partial = render_to_string( partial_template_path, context)
+        partial = render_to_string( partial_template_path, context )
     except TemplateDoesNotExist:
         return TemplateResponse( 
             request,
@@ -38,17 +42,17 @@ def partial_json_convert( template_name, context ):
             context)
     else:
         context["html"] = partial
+        context.update( csrf(request) )
     return context
 
     
 def mix_response(request, template_name, context, json_convert=None):
 
     if request.is_ajax():
-        
         if json_convert:
             response_dict = json_convert( template_name, context )
         else:
-            response_dict = partial_json_convert( template_name, context )
+            response_dict = partial_json_convert(request, template_name, context )
 
         return HttpResponse(simplejson.dumps(response_dict, default=to_json), mimetype='application/javascript')
 

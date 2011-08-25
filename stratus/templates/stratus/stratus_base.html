@@ -20,7 +20,7 @@
 </div>
 
 {% if repo_name and branch_name %}
-<form method="post" action="{% url stratus-search repo_name branch_name %}" class="serch_form">
+<form method="get" action="{% url stratus-search repo_name branch_name %}" class="serch_form ajax" rel="#pages">
 	<p>
 		<input type="text" name="query" id="id_query" value="{{ query }}" /> 
 		<button>SEARCH</button>
@@ -75,11 +75,12 @@
 	<div id="main">
 		<ul class="tabs"></ul>
 		<div id="pages">
+			<div class="page">
 {% block git_content %}{% endblock git_content %}
-		</div>
-	</div>
-
-</div> 
+			</div><!-- /.page -->
+		</div><!-- /.pages -->
+	</div><!-- /main -->
+</div> <!-- /.gitter -->
 
 
 
@@ -98,7 +99,7 @@ $(document).ready( function(){
 	var branch = "{{ branch_name }}";
 	var path = "{{path}}";
 
-	// ----------------- CONSOLE --------------------
+	// ------------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
 		var data = {"com":"git status"};
 		$('#console_output').load("{% url stratus-consol repo_name %}", data, function() {});

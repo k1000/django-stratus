@@ -26,20 +26,20 @@ def search(request, repo_name, branch):
     found_files = []
     query = ""
     repo = get_repo( repo_name )
-    if request.method == 'POST':
-        form = SearchForm( request.POST )
-        query = request.POST.get("query", "")
+    if request.method == 'GET':
+        form = SearchForm( request.GET )
+        query = request.GET.get("query", "")
         if query:
             git = repo.git
             #http://book.git-scm.com/4_finding_with_git_grep.html
             try:
                 result = git.grep( "--name-only", query )
-            except GitCommandError:
+            except git.GitCommandError:
                 pass
             else:
                 found_files = result.split("\n")
     else:
-        form = SearchForm( request.POST )
+        form = SearchForm( request.GET )
     
     context = dict(
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
