@@ -3,9 +3,9 @@
 	
 
 	<ul class="breadcrumbs">
-		<li><a href="{% url stratus-tree-view repo_name branch_name "" %}" class="ajax" rel="#tree" >//</a> </li>
+		<li><a href="{% url stratus-tree-view repo_name branch_name "" %}" class="ajax" rel="#working_tree" >//</a> </li>
 		{% for crumb, path in breadcrumbs %}
-	    <li><a href="{% url stratus-tree-view repo_name branch_name path %}" class="ajax" rel="#tree" >{{crumb}}</a>/</li>
+	    <li><a href="{% url stratus-tree-view repo_name branch_name path %}" class="ajax" rel="#working_tree" >{{crumb}}</a>/</li>
 		{% endfor %}
 	</ul>
 
@@ -17,11 +17,12 @@
 	{% endif %}
 
 	<div class="edit_file">
+		<a href="{% url stratus-get-file repo_name branch_name path %}" target="new" class="raw">raw</a>
 	{% if file_meta.mime_type == "text" or file_meta.mime_type == "application"  %}
 	  	{% include "stratus/_edit_text.html" %}
 	{% else %}
 		{% if file_meta.mime_type == "image" %}
-		<img src="/{{ path }}" width="300" />
+		<img src="{% url stratus-get-file repo_name branch_name path %}" width="300" />
 		{% endif %}
 		{% include "stratus/_edit_file.html" %}
 	{% endif %}

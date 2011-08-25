@@ -32,7 +32,7 @@ def partial_json_convert( request, template_name, context ):
         
     partial_template_path = "/".join( [ tmpl_dir[:-1][0], "%s%s" % (partial_prefix, tmpl_dir[-1:][0]) ] )
 
-    
+    context.update( csrf(request) )
     try:
         partial = render_to_string( partial_template_path, context )
     except TemplateDoesNotExist:
@@ -42,7 +42,7 @@ def partial_json_convert( request, template_name, context ):
             context)
     else:
         context["html"] = partial
-        context.update( csrf(request) )
+        
     return context
 
     

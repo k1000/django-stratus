@@ -61,16 +61,22 @@ def view(request, repo_name, branch, commit_sha=None):
         'stratus/commit.html', 
         context)
 
+@login_required
 def undo(request, repo_name, branch_name):
     """
     undo last commit
     """
     repo = get_repo( repo_name )
     git = repo.git
-    reset_result = git.reset( "--soft" "HEAD^" )
+    reset_result = git.reset( "--soft", "HEAD^" )
     messages.success(request, reset_result ) 
-    return redirect('stratus-commit-view', repo_name, branch_name  )
+    context = dict(msg=reset_result, )
+    return mix_response( 
+        request, 
+        'stratus/undo.html', 
+        context)
 
+@login_required
 def diff(request, repo_name, branch, path, commits=[]):
     """
     view file diffs betwin given commits

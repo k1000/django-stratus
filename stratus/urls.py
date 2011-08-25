@@ -17,11 +17,11 @@ urlpatterns = patterns('stratus.views.file',
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/rename/(?P<file_path>[a-zA-Z0-9\-_\.\/\\]+)$', 
         "rename", name='stratus-rename-file'),
 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/get/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
+        "get_file", name='stratus-get-file'),
+
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/(?P<commit_sha>[a-z0-9\-_]+)/view/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
         "view", name='stratus-view-file'),
-
-    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/(?P<commit_sha>[a-z0-9\-_]+)/get/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
-        "get", name='stratus-get-file'),
 )
 
 urlpatterns += patterns('stratus.views.tree',
@@ -50,7 +50,7 @@ urlpatterns += patterns('stratus.views.commit',
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/$', 
     	"log", name='stratus-log'),
 
-    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/undo/$', 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch_name>[a-z0-9\-_]+)/undo/$', 
         "undo", name='stratus-undo'),
 )
 

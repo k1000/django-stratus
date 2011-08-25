@@ -20,7 +20,7 @@ class FileDeleteForm(forms.Form):
 
 class FileUploadForm(forms.Form):
 	"""docstring for FileEditForm"""
-	dir_path = forms.CharField( widget=forms.HiddenInput )
+	dir_path = forms.CharField( widget=forms.HiddenInput, required=False )
 	file_source = forms.FileField( )
 
 class RenameForm(forms.Form):

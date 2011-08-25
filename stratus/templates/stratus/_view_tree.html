@@ -33,7 +33,7 @@
 
 	<p class="new_file">NEW FILE</p>
 
-	<form action="{% url stratus-upload-file  repo_name branch_name %}" method="post" >
+	<form enctype="multipart/form-data" action="{% url stratus-upload-file  repo_name branch_name %}" method="post" class="ajax" rel="#pages" >
 		{{ upload_form.as_p }}
 		{% csrf_token %}
 		<button>UPLOAD</button>

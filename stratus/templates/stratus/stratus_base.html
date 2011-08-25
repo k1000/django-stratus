@@ -27,7 +27,7 @@
 		{% csrf_token %}
 	</p>
 </form>
-<a href="{% url stratus-undo repo_name branch_name %}" class="undo button" title="undo last commit">undo</a>
+<a href="{% url stratus-undo repo_name branch_name %}" class="undo button ajax" rel="#tool_box" title="undo last commit">undo</a>
 {% endif %}
 {% endblock breadcrumbs %}
 
@@ -45,18 +45,6 @@
 {% block git_tree %}{% endblock git_tree %}
 	</div>
 {% endif %}
-
- <!-- <div>
- 	<form action="" method="get" >
-		<input type="text" name="file_source" />
-		<button>NEW FILE</button>
-	</form>
-	<form action="" method="post" >
-		<input type="file" name="file_source" />
-		<button>UPLOAD FILE</button>
-	</form>
- </div>
--->
 	<div id="toolbox">
 	</div>
 
