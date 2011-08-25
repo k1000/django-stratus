@@ -25,7 +25,7 @@ $(document).ready( function(){
 	$("#toogle_files").click( function(event){
 		event.preventDefault();
 		$(this).removeClass("open").addClass("closed");
-		$('#tree').toggle("fast");
+		$('#working_tree').toggle("fast");
 	})
 
 	// ----------------- NEW FILE --------------------

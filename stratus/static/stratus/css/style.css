@@ -150,7 +150,7 @@ ul {
 	
 	overflow: hidden;
 }
-#tree {
+#working_tree {
 	float: left;
 	box-shadow: 0px -2px 3px #dedede;
 	width: 200px;
@@ -250,9 +250,16 @@ li.blob{
 li.tree{
 	background: url(/media/commitlog/images/directory.png) no-repeat 10px;
 }
-#tree .rename {
+#working_tree .rename {
 	display: none;
 }
+#working_tree ul.breadcrumbs {
+  overflow: hidden;
+  padding-left: 10px;
+  margin-top: 16px;
+}
+
+
 p.new_file{
 	padding: 1.4em;
 	margin: 0;
@@ -260,11 +267,7 @@ p.new_file{
 	border-bottom: 1px solid #dcdcdc;
 }
 
-#tree ul.breadcrumbs {
-	overflow: hidden;
-	padding-left: 10px;
-	margin-top: 16px;
-}
+
 /* ---------- EDIT -------------- */
 .edit_file button {
 	float: right;

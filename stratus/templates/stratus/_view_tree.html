@@ -2,9 +2,9 @@
 <div class="tree" id="tree_{{repo_name}}_{{branch_name}}" >
 
 	<ul class="breadcrumbs">
-		<li><a href="{% url stratus-tree-view repo_name branch_name "" %}" class="ajax" rel="#tree" >//</a> </li>
+		<li><a href="{% url stratus-tree-view repo_name branch_name "" %}" class="ajax" rel="#working_tree" >//</a> </li>
 		{% for crumb in breadcrumbs %}
-		<li><a href="{% url stratus-tree-view repo_name branch_name crumb.1 %}" class="ajax" rel="#tree" >{{crumb.0}}</a>/</li>
+		<li><a href="{% url stratus-tree-view repo_name branch_name crumb.1 %}" class="ajax" rel="#working_tree" >{{crumb.0}}</a>/</li>
 		{% endfor %}
 		<li>{{ dir_path|last }}/</li>
 	</ul>
@@ -18,7 +18,7 @@
 		{% for element in tree %}
 		<li class="{{ element.type }}">
 			{% if element.type == "tree" %}
-				<a href="{% url stratus-tree-view repo_name branch_name element.path %}" class="ajax" rel="#tree" title="{{ element.name }}/">{{ element.name }}/</a>
+				<a href="{% url stratus-tree-view repo_name branch_name element.path %}" class="ajax" rel="#working_tree" title="{{ element.name }}/">{{ element.name }}/</a>
 			{% else %}
 				<a href="{% url stratus-edit-file repo_name branch_name element.path %}" class="ajax" rel="#pages" title="{{ element.name }}" >{{ element.name }}</a>
 				<small>{{ element.size|filesizeformat }}</small>
