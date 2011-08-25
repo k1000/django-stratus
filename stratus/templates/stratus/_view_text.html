@@ -1,0 +1,19 @@
+{% load commit_tags %}
+<textarea id="id_file_source" cols="30" rows="10">{{ file_source }}</textarea>
+
+{% if file_meta and file_meta.type != "text/plain" %}
+	<script type="text/javascript" src="{{ GITTER_MEDIA_URL }}stratus/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
+{% endif %}
+
+<script > 
+var ref_id  = "#view_{{repo_name}}_{{branch_name}}_{{ path|slugify }}_{{ commit.hexsha|truncatechars:16 }} #id_file_source";
+
+var editor = CodeMirror.fromTextArea($( ref_id )[0], {
+  mode: {name: "{{ file_meta.type }}"},
+  lineNumbers: true,
+  indentUnit: 4,
+  readOnly: true
+});
+
+</script> 
+

@@ -1,0 +1,118 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+	<ul>
+		<li><a href="{% url stratus-repos %}" >projects</a></li>
+		{% if repo_name %}
+		<li class="project">{{ repo_name }}</li>
+		{% endif %}
+		{% if branch_name %}
+
+		<li>branch "<a class="ajax" rel="#pages" href="{% url stratus-tree-view repo_name branch_name "" %}"  >{{ branch_name }}</a>" </li>	
+		{% endif %}
+		{% if repo_name and branch_name %}
+		<li><a class="ajax" rel="#pages" href="{% url stratus-log repo_name branch_name %}"  >commits</a> </li>
+
+		{% endif %}
+{% block git_breadcrumbs %}{% endblock git_breadcrumbs %}
+	</ul>
+</div>
+
+{% if repo_name and branch_name %}
+<form method="post" action="{% url stratus-search repo_name branch_name %}" class="serch_form">
+	<p>
+		<input type="text" name="query" id="id_query" value="{{ query }}" /> 
+		<button>SEARCH</button>
+		{% csrf_token %}
+	</p>
+</form>
+<a href="{% url stratus-undo repo_name branch_name %}" class="undo button" title="undo last commit">undo</a>
+{% endif %}
+{% endblock breadcrumbs %}
+
+
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/css/style.css" />
+<link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.css" /> 
+<link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/css/theme_dark.css" />
+
+<div class="gitter">
+{% if branch_name %}
+	<p><a href="#" id="toogle_files" class="toggle" rel="#tree">Files:</a></p>
+	<div id="tree">
+{% block git_tree %}{% endblock git_tree %}
+	</div>
+{% endif %}
+
+ <!-- <div>
+ 	<form action="" method="get" >
+		<input type="text" name="file_source" />
+		<button>NEW FILE</button>
+	</form>
+	<form action="" method="post" >
+		<input type="file" name="file_source" />
+		<button>UPLOAD FILE</button>
+	</form>
+ </div>
+-->
+	<div id="toolbox">
+	</div>
+
+	<div id="console">
+		<h4>Console</h4>
+		<div class="content">
+			<div id="console_output"></div>
+			<p>
+				<label for="console-input">Command</label>
+				<input id="console-input" type="text" />
+				<button id="console_enter">ENTER</button>
+			</p>
+		</div>
+	</div>
+	
+	<div id="main">
+		<ul class="tabs"></ul>
+		<div id="pages">
+{% block git_content %}{% endblock git_content %}
+		</div>
+	</div>
+
+</div> 
+
+
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/script.js"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.js"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/runmode.js"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/overlay.js"></script>
+
+{% if repo_name and branch_name %}
+<script type="text/javascript">
+$(document).ready( function(){
+	var repo = "{{repo_name}}";
+	var branch = "{{ branch_name }}";
+	var path = "{{path}}";
+
+	// ----------------- CONSOLE --------------------
+	$("#console_enter").click(function( ){
+		var data = {"com":"git status"};
+		$('#console_output').load("{% url stratus-consol repo_name %}", data, function() {});
+	})
+
+	// ----------------- TREE INIT --------------------
+	var tree_path =  {% if path %} '{% url stratus-tree-view repo_name branch_name path %}'
+	{% else %} '{% url stratus-tree-view repo_name branch_name "" %}' {% endif %};
+	get_page(tree_path, $("#tree"));
+
+	//$("#tree").load(tree_path);
+})
+</script>
+{% endif %}	
+{% block js %}{% endblock js %}
+
+{% endblock content %}

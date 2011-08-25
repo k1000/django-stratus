@@ -1,0 +1,13 @@
+{% extends "stratus/stratus_base.html" %} {% load commit_tags %}
+
+
+{% block git_content %}
+<div class="page">
+{% if commit %}
+	<h1>Commit {{ commit.hexsha|truncatechars:16 }}</h1>
+	{% include "stratus/_commit.html" %}
+{% else %}
+	<h2>No commit found</h2>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "stratus/stratus_base.html" %}{% load commit_tags %}
+
+{% block git_content %}
+<div class="page">
+<h2>GIT Repositories<h2>
+<ul class="repos">
+	{% for repo_name, repo in repos.items %}
+	<li><h2>{{ repo_name }}</h2>
+		<p>last commit <em>{{ repo.head.commit.authored_date|mkdate }}</em> "{{ repo.head.commit.message }}" [<a href="mailto:{{ repo.head.commit.author.email }}">{{ repo.head.commit.author }}</a>]</p>
+
+		<p>branches:</p>
+		<ul class="branches">
+			{% for branch in repo.branches %}
+			<li>
+				<!-- <a href="{% url stratus-tree-view repo_name branch.name "" %}">"{{ branch.name }}"</a> -->
+				<a href="{% url stratus-log repo_name branch.name %}">{{ branch.name }}</a>
+				{% if repo.tags %}
+				<p>Tags.</p>
+				<ul class="tags">
+					{% for tag in repo.tags %}
+					<li><a href="{% url stratus-commit-tree-view repo_name branch.name tag "" %}">"{{ tag }}"</a></li>
+					{% endfor %}
+				</ul>					
+				{% endif %}
+			{% endfor %}
+		</ul>
+
+		<p>is dirty: {{ repo.is_dirty }} </p>
+		<p>status: </p>
+		<pre>
+		{{ repo.git.status }}
+		</pre>
+	</li>
+	{% endfor %}
+</ul>
+</page>
+{% endblock %}
