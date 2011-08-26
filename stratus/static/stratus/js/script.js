@@ -107,24 +107,63 @@ $(document).ready( function(){
 		var send_data = form.serialize();
 		var rel = form.attr("rel");
 		pages.hide_current();
-		/*$.post(method, url, send_data, function(data) {
-			pages.new_page( url, data.html )
-			var tab_text = $(data.html).find("h1").text().replace('"', "");
-			tabs.mk_tab(url, tab_text);
-		}, "json")*/
+
+		alert("kkk")
+		// upload forms
+		/*var upload = form.find("input[type=file]");
+		if ( upload ) {
+			var data = {}
+			form.find("input textarea").each( function( ) {
+				data[this.name] = this.value;
+			})
+			upload[0].ajaxfileupload({
+			      'action': url,
+			      'params': data,
+			      'onComplete': function(response) {
+				        if (  rel == "#pages") {
+				   			pages.new_page( url, data.html )
+							var tab_text = $(data.html).find("h1").text().replace('"', "");
+							tabs.mk_tab(url, tab_text);
+				   		}
+			      },
+			      'onStart': function() {
+			        if(weWantedTo) return false; // cancels upload
+			      },
+			      'onCancel': function() {
+			        console.log('no file selected');
+			      }
+			    });
+		// other forms
+		} else {
+			$.ajax({
+			   type: form.attr("method"),
+			   url: url,
+			   data: form.serialize(),
+			   dataType: "json",
+			   success: function(data){
+			   		if (  rel == "#pages") {
+			   			pages.new_page( url, data.html )
+						var tab_text = $(data.html).find("h1").text().replace('"', "");
+						tabs.mk_tab(url, tab_text);
+			   		}	
+			   }
+			});
+		}*/
 		$.ajax({
-		   type: form.attr("method"),
-		   url: url,
-		   data: form.serialize(),
-		   dataType: "json",
-		   success: function(data){
-		   		if (  rel == "#pages") {
-		   			pages.new_page( url, data.html )
-					var tab_text = $(data.html).find("h1").text().replace('"', "");
-					tabs.mk_tab(url, tab_text);
-		   		}	
-		   }
-		});
+			   type: form.attr("method"),
+			   url: url,
+			   data: form.serialize(),
+			   dataType: "json",
+			   success: function(data){
+			   		if (  rel == "#pages") {
+			   			pages.new_page( url, data.html )
+						var tab_text = $(data.html).find("h1").text().replace('"', "");
+						tabs.mk_tab(url, tab_text);
+			   		}	
+			   }
+			});
+
+		return false
 	})
 })
 

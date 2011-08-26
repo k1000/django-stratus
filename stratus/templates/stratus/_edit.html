@@ -31,7 +31,19 @@
 		<small class=="img_meta" >image: "{{ img_meta.0 }}" {{ img_meta.1}}x{{ img_meta.2}}px</small>
 
 		{% endif %}
-		{% include "stratus/_edit_file.html" %}
+		<form action="{% url stratus-edit-file repo_name branch_name path %}" method="post" enctype="multipart/form-data" class="ajax" rel="next" >
+			<div>
+				<input name="file_source" type="file" />
+				{{ form.file_source.errors }}
+			</div>
+			<div class="msg">
+				{{ form.message.label }}
+				{{ form.message }}
+				{{ form.message.errors }}
+			</div>
+			{% csrf_token %}
+			<p><button>COMMIT</button></p>
+		</form>
 	{% endif %}
 	</div>
 

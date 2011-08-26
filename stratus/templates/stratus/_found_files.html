@@ -6,7 +6,7 @@
 	{% endfor %}
 	</ul>
 
-	<form action="{% url stratus-replace repo_name branch_name %}" method="post">
+	<form action="{% url stratus-replace repo_name branch_name %}" method="post" class"ajax" rel="next">
 		<p>Replace "<strong>{{ query }}</strong>" with <input type="text" />
 		<button>REPLACE</button></p>
 	</form>

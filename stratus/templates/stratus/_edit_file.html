@@ -1,5 +1,8 @@
 <form action="{% url stratus-edit-file repo_name branch_name path %}" method="post" enctype="multipart/form-data" >
-	<div>{{ form.file_source }}</div>
+	<div>
+		{{ form.file_source }}
+
+	</div>
 	<div class="msg">
 		{{ form.message.label }}
 		{{ form.message }}

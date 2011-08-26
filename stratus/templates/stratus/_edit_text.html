@@ -1,4 +1,15 @@
-{% include "stratus/_edit_file.html" %}
+	<form action="{% url stratus-edit-file repo_name branch_name path %}" method="post" enctype="multipart/form-data" class="ajax" rel="next" >
+		<div>
+			<textarea name="file_source" class="file_source">{{ file_source }}<textarea> 
+		</div>
+		<div class="msg">
+			{{ form.message.label }}
+			{{ form.message }}
+			{{ form.message.errors }}
+		</div>
+		{% csrf_token %}
+		<p><button>COMMIT</button></p>
+	</form>
 
 {# <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}stratus/python-complete.js"></script> #}
 {% if file_meta and file_meta.type != "text/plain" %}
@@ -39,7 +50,7 @@
 {% endif %}
 
 <script type="text/javascript"> 
-var editor = CodeMirror.fromTextArea(  $("#edit_{{repo_name}}_{{branch_name}}_{{ path|slugify  }} #id_file_source")[0], {
+var editor = CodeMirror.fromTextArea(  $("#edit_{{repo_name}}_{{branch_name}}_{{ path|slugify  }} .file_source")[0], {
   mode: {name: "{{ file_meta.type }}"},
   lineNumbers: true,
   indentUnit: 4,
