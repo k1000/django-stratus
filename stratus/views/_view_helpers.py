@@ -63,7 +63,7 @@ def mix_response(request, template_name, context, json_convert=None):
             context)
 
 def error_view(request, msg, code=None):
-    return TemplateResponse( 
+    return mix_response( 
             request, 
             'stratus/error.html', 
             { "msg":msg, })
