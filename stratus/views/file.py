@@ -187,6 +187,12 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         path = path,
         name = path.split("/")[-1:][0],
     )
+    
+    if mime[0] == "image":
+        import base64
+        context["img_base"] = base64.b64encode( file_source )
+        from getimageinfo import getImageInfo
+        context["img_meta"] = getImageInfo( file_source )
         
     return mix_response( 
         request, 
@@ -253,6 +259,8 @@ def view(request, repo_name, branch, path, commit_sha=None,):
     if mime[0] == "image":
         import base64
         context["img_base"] = base64.b64encode( file_source )
+        from getimageinfo import getImageInfo
+        context["img_meta"] = getImageInfo( file_source )
 
     return mix_response( 
         request, 

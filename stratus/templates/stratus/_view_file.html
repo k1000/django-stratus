@@ -1,9 +1,12 @@
 {% load commit_tags %}
 <div id="view_{{repo_name}}_{{branch_name}}_{{ path|slugify }}_{{ commit.hexsha|truncatechars:16 }}">
-<a class="history ajax" ref="contents" href="{% url stratus-history-file repo_name branch_name path %}" title="History of '{{ path }}'">history</a>
-<h1>
-	File {{ path }} {% if commit %} at {{ commit.hexsha|truncatechars:16 }} commit {% endif %}
+
+<p class="file_tools">
+	<a class="history ajax" ref="contents" href="{% url stratus-history-file repo_name branch_name path %}" title="History of '{{ path }}'">history</a>
+</p>
+<h1>File {{ path }} ({{ file_meta.size|filesizeformat }}) {% if commit %} at {{ commit.hexsha|truncatechars:6 }} commit {% endif %}
 </h1>
+
 
 {% if commit %}
 {% include "stratus/_commit.html" %}
@@ -16,7 +19,10 @@
 {% endif %}
 
 {% if file_meta.mime_type == "image" %}
-	<img src="data:{{ file_meta.mime }};base64,{{ img_base }}" width="300" />
+	
+	<img width="{{ img_meta.1}}" height="{{ img_meta.2}}" src="data:{{ file_meta.mime }};base64,{{ img_base }}"  />
+	<small class=="img_meta" >image: "{{ img_meta.0 }}" {{ img_meta.1}}x{{ img_meta.2}}px</small>
+	
 {% endif %}
 </div>
 
