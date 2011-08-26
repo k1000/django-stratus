@@ -7,7 +7,35 @@
 
 {% if file_meta.type == "css" or file_meta.type == "html" %}
 <a href="https://github.com/sergeche/zen-coding/blob/master/plugins/codemirror/zen_editor.js#L241" target="new"><img src="{{ STRATUS_MEDIA_URL }}stratus/zen-textarea/zc-powered.png" alt="zen powered" /></a>
-<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/zen-textarea/zen_textarea.min.js"></script>	
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/zen-textarea/zen_textarea.min.js"></script>
+
+<dl class="help">
+	<dd>Meta+E</dd><dt>Expand Abbreviation</dt>
+	<dd>Tab</dd><dt>Expand Abbreviation</dt>
+	<dd>Meta+D</dd><dt>Balance Tag Outward</dt>
+	<dd>Shift+Meta+D</dd><dt>Balance Tag inward</dt>
+	<dd>Shift+Meta+A</dd><dt>Wrap with Abbreviation</dt>
+	<dd>Ctrl+Alt+RIGHT</dd><dt>Next Edit Point</dt>
+	<dd>Ctrl+Alt+LEFT</dd><dt>Previous Edit Point</dt>
+	<dd>Meta+L</dd><dt>Select Line</dt>
+	<dd>Meta+Shift+M</dd><dt>Merge Lines</dt>
+	<dd>Meta+/</dd><dt>Toggle Comment</dt>
+	<dd>Meta+J</dd><dt>Split/Join Tag</dt>
+	<dd>Meta+K</dd><dt>Remove Tag</dt>
+	<dd>Meta+Y</dd><dt>Evaluate Math Expression</dt>
+	
+	<dd>Ctrl+UP</dd><dt>Increment number by 1</dt>
+	<dd>Ctrl+DOWN</dd><dt>Decrement number by 1</dt>
+	<dd>Alt+UP</dd><dt>Increment number by 0.1</dt>
+	<dd>Alt+DOWN</dd><dt>Decrement number by 0.1</dt>
+	<dd>Ctrl+Alt+UP</dd><dt>Increment number by 10</dt>
+	<dd>Ctrl+Alt+DOWN</dd><dt>Decrement number by 10</dt>
+
+	<dd>Meta+.</dd><dt>Select Next Item</dt>
+	<dd>Meta+,</dd><dt>Select Previous Item</dt>
+	<dd>Meta+B</dd><dt>Reflect CSS Value</dt>
+</dl>
+
 {% endif %}
 
 <script type="text/javascript"> 

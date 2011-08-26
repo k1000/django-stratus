@@ -14,7 +14,7 @@
 		<a href="{% url stratus-get-file repo_name branch_name path %}" target="new" class="raw" title="See raw file">raw</a>
 	</p>
 	
-	<h1>{{path}}</h1>
+	<h1>{{name}} ({{ file_meta.size|filesizeformat }}) </h1>
 
 	{% if result_msg %}
 		<h3>{{ result_msg|safe }}</h3>

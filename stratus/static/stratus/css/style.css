@@ -82,45 +82,7 @@
 	padding: 0;
 }
 
-img.gravatar {
-	float: left;
-	background: white;
-	padding: 3px;
-	border: 1px solid #cdcdcd;
-	margin-right: 1em;
-}
 
-.commits {
-	color: #838b9c;
-}
-.robot{
-    float: right;
-}
-.human{
-    float: left;
-}
-.human em{
-	clear: left;
-    float: left;
-}
-.human strong{
-   clear: left;
-}
-.message {
-	float: left;
-	color: black;
-}
-.commit{
-    overflow: hidden;
-    clear: both;
-    border-top: 1px solid #e9eeec;
-
-    padding: 5px;
-}
-.commit ul{
-	clear: left;
-	margin-left: 14em;
-}
 h3 {
     font-size: 2em;
 }
@@ -176,9 +138,7 @@ ul {
 .colM{
 	clear: both;
 }
-.history {
-	float: right;
-}
+
 .tools {
 	margin-top: 20px;
 	border: 1px solid #d8dae0;
@@ -226,6 +186,48 @@ ul {
 .next {
 	float: right;
 }
+/* ---------- COMMIT -------------- */
+
+img.gravatar {
+	float: left;
+	background: white;
+	padding: 3px;
+	border: 1px solid #cdcdcd;
+	margin-right: 1em;
+}
+
+.commits {
+	color: #838b9c;
+}
+.robot{
+    float: right;
+}
+.human{
+    float: left;
+}
+.human em{
+	clear: left;
+    float: left;
+}
+.human strong{
+   clear: left;
+}
+.message {
+	float: left;
+	color: black;
+}
+.commit{
+    overflow: hidden;
+    clear: both;
+    border-top: 1px solid #e9eeec;
+
+    padding: 5px;
+}
+.commit ul{
+	clear: left;
+	margin-left: 14em;
+}
+
 /* ---------- TREE -------------- */
 
 .delete,
@@ -275,6 +277,10 @@ p.new_file{
 	margin-top: 1em;
 	padding-right: 1em;
 }
+.file_tools {
+	float: right;
+}
+
 /* ---------- SEARCH -------------- */
 .serch_form {
 	float: right;
@@ -286,7 +292,7 @@ p.new_file{
 .serch_form input{
 	height:2em
 }
-/* ---------- SEARCH -------------- */
+/* ---------- CODEMIRROR -------------- */
 .CodeMirror {
 	width: 54em;
 }

@@ -185,6 +185,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         branch_name = branch,
         delete_form = FileDeleteForm( initial={"message":MSG_DELETE % path }),
         path = path,
+        name = path.split("/")[-1:][0],
     )
         
     return mix_response( 
@@ -247,6 +248,7 @@ def view(request, repo_name, branch, path, commit_sha=None,):
         repo_name = repo_name,
         branch_name = branch,
         path = path,
+        name = path.split("/")[-1:][0],
     )
     if mime[0] == "image":
         import base64
