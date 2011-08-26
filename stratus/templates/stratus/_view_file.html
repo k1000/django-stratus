@@ -1,9 +1,8 @@
 {% load commit_tags %}
 <div id="view_{{repo_name}}_{{branch_name}}_{{ path|slugify }}_{{ commit.hexsha|truncatechars:16 }}">
-<a class="history ajax" ref="#pages" href="{% url stratus-history-file repo_name branch_name path %}" title="History of '{{ path }}'">history</a>
+<a class="history ajax" ref="contents" href="{% url stratus-history-file repo_name branch_name path %}" title="History of '{{ path }}'">history</a>
 <h1>
-	File {{ path }}
-	{% if commit %} at {{ commit.hexsha|truncatechars:16 }} commit {% endif %}
+	File {{ path }} {% if commit %} at {{ commit.hexsha|truncatechars:16 }} commit {% endif %}
 </h1>
 
 {% if commit %}
@@ -20,6 +19,7 @@
 	<img src="data:{{ file_meta.mime }};base64,{{ img_base }}" width="300" />
 {% endif %}
 </div>
+
 {% if diff %}
 	{% include "stratus/_diff.html" %}
 {% endif %}

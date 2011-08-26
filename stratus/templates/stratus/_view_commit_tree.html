@@ -3,28 +3,28 @@
 	<h1>Tree at {{ commit.hexsha|truncatechars:16 }} commit</h1>
 	{% include "stratus/_commit.html" %}
 	<ul class="breadcrumbs">
-		<li><a href="{% url stratus-commit-tree-view repo_name branch_name commit "" %}" class="ajax" rel="current" >//</a> </li>
+		<li><a href="{% url stratus-commit-tree-view repo_name branch_name commit "" %}" class="ajax" rel="next" >//</a> </li>
 		{% for crumb in breadcrumbs %}
-		<li><a href="{% url stratus-commit-tree-view repo_name branch_name commit crumb.1 %}" class="ajax" rel="current" >{{crumb.0}}</a>/</li>
+		<li><a href="{% url stratus-commit-tree-view repo_name branch_name commit crumb.1 %}" class="ajax" rel="next" >{{crumb.0}}</a>/</li>
 		{% endfor %}
 		<li>{{ dir_path|last }}/</li>
 	</ul>
 
 	<ul class="list">
 		{% if dir_path.0 %}
-		<li><a href="./" class="ajax" rel="#pages" >..</a>
+		<li><a href="./" class="ajax" rel="contents" >..</a>
 		{% endif %}
 
 		{% for element in tree %}
 		<li class="{{ element.type }}">
 			{% if element.type == "tree" %}
 				<a href="{% url stratus-commit-tree-view repo_name branch_name commit.hexsha element.path %}" 
-				  class="ajax" rel="current" title="Tree at {{ element.name }}/"
+				  class="ajax" rel="next" title="Tree at {{ element.name }}/"
 				>
 					{{ element.name }}/
 				</a>
 			{% else %}
-				<a href="{% url stratus-view-file repo_name branch_name commit.hexsha element.path %}" class="ajax" rel="#pages" title="'{{ element.name }}' at {{ commit.hexsha|truncatechars:16 }} commit" >{{ element.name }}</a>
+				<a href="{% url stratus-view-file repo_name branch_name commit.hexsha element.path %}" class="ajax" rel="contents" title="'{{ element.name }}' at {{ commit.hexsha|truncatechars:16 }} commit" >{{ element.name }}</a>
 				<small>{{ element.size|filesizeformat }}</small>
 			{% endif %}
 		</li>

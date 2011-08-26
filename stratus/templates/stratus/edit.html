@@ -1,10 +1,10 @@
-{% extends "stratus/stratus_base.html" %}{% load commit_tags %}
+{% extends "stratus/stratus_base.html" %}
 
 
 {% block git_breadcrumbs %}
-	<li>path <a href="{% url stratus-tree-view repo_name branch_name "" %}" >root/</a> </li>
+	<li><a href="{% url stratus-tree-view repo_name branch_name "" %}" class="ajax" rel="index">//</a> </li>
 	{% for crumb, path in breadcrumbs %}
-    <li><a href="{% url stratus-tree-view repo_name branch_name path %}" >{{crumb}}/</a> 
+    <li><a href="{% url stratus-tree-view repo_name branch_name path %}" class="ajax" rel="index" >{{crumb}}/</a> 
 	{% endfor %}
 {% endblock git_breadcrumbs %}
 

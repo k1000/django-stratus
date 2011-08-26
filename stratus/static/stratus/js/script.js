@@ -40,7 +40,7 @@ $(document).ready( function(){
 		event.preventDefault();
 		var rel = this.rel;
 		var url = this.href;
-		if (rel == "#pages") {
+		if (rel == "contents") {
 			// if its the same page do nothing
 			if ( url != pages.current) {
 				// hide current page
@@ -51,16 +51,8 @@ $(document).ready( function(){
 					pages.show_page(url);
 				//open new page
 				} else {
-					var title = this.title;
-					pages.open_page( url,
-						// create tab
-						function(url, data) {
-							if ( !title ) {
-								title = $(data.html).find("h1").text().replace('"', "");
-							}
-					  		tabs.mk_tab(url, title);
-						}
-					)
+					tabs.mk_tab(url, this.title);
+					pages.open_page( url );
 				}				
 			}
 		//load in current page
@@ -68,6 +60,8 @@ $(document).ready( function(){
 			var current = $(this).parents(".page");
 			get_page(url, current);
 		//load in arbitrary container
+		} else if (rel == "index" ) {
+			get_page(url, $("#working_tree"));
 		} else {
 			get_page(url, $(rel));
 		}
@@ -175,7 +169,7 @@ function TabManager( tab_container, pages ){
 	}
 	this.mk_tab = function( url, title ){
 		this.deactivate_tabs();
-		return this.tab_container.append("<li class='active' ><a href='#' class='close' title='close' >x</a><a href='" + url + "' title='"+ title +"' class='tab' >" + title + "</a></li>")
+		return this.tab_container.append("<li class='active' ><a href='#' class='close' title='close' >x</a><a href='" + url + "' title=\""+ title +"\" class='tab' >" + title + "</a></li>")
 	}
 	this.rm_tab = function( url ){
 		var tab_to_remove = this.get_tab_by_url( url ).parent()
