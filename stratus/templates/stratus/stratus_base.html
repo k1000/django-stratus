@@ -19,16 +19,22 @@
 	</ul>
 </div>
 
+
 {% if repo_name and branch_name %}
-<form method="get" action="{% url stratus-search repo_name branch_name %}" class="serch_form ajax" rel="#pages">
-	<p>
-		<input type="text" name="query" id="id_query" value="{{ query }}" /> 
-		<button>SEARCH</button>
-		{% csrf_token %}
-	</p>
-</form>
-<a href="{% url stratus-undo repo_name branch_name %}" class="undo button ajax" rel="#tool_box" title="undo last commit">undo</a>
+<div id="project_tools">
+	<form method="get" action="{% url stratus-search repo_name branch_name %}" class="serch_form ajax" rel="#pages">
+		<p>
+			<input type="text" name="query" id="id_query" value="{{ query }}" /> 
+			<button>SEARCH</button>
+			{% csrf_token %}
+		</p>
+	</form>
+	<a href="{% url stratus-undo repo_name branch_name %}" class="undo button ajax" rel="#tool_box" title="undo last commit">undo</a>
+	<a href="https://github.com/joyent/node/wiki/modules" id="open_preview" title="open preview" class="button">preview</a>
+</div>
 {% endif %}
+
+
 {% endblock breadcrumbs %}
 
 
@@ -74,7 +80,7 @@
 
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
-
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/minimal.js" charset="utf-8"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/script.js"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.js"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/runmode.js"></script>
@@ -102,6 +108,18 @@ $(document).ready( function(){
 })
 </script>
 {% endif %}	
+
 {% block js %}{% endblock js %}
+
+<script type="text/template" id="url_template">
+<div class="page">
+<p>
+	<input type="text" name="src" value="sssss" >
+	<button class="go">GO</button>
+</p>
+<iframe src="sssss"></iframe>
+</div>
+</script>
+
 
 {% endblock content %}

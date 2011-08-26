@@ -1,6 +1,4 @@
-/* @override 
-	http://127.0.0.1:8000/static/stratus/css/style.css
-*/
+/* @override http://127.0.0.1:8000/static/stratus/css/style.css */
 
 /* #Buttons
 ================================================== */
@@ -229,6 +227,7 @@ ul {
 	float: right;
 }
 /* ---------- TREE -------------- */
+
 .delete,
 .rename {
 	float: right;
@@ -311,7 +310,7 @@ ul.tabs li {
   margin: 0;
   padding: 0;
   height: 31px;
-  width: 80px;
+  max-width: 80px;
   line-height: 31px;
   
   margin-bottom: -1px;
@@ -321,7 +320,7 @@ ul.tabs li {
   box-shadow: 0px -3px 6px #b3bfc8;
 }
 ul.tabs li a {
-	border: 1px none #abaeae;
+  border: 1px none #abaeae;
   text-decoration: none;
   color: #868686;
   display: block;
@@ -339,6 +338,7 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  {
   background: #fff;
   border-bottom: 1px solid #fff;
   width: auto;
+  max-width: none;
   z-index: 10;
 }
 .tabs a.close{

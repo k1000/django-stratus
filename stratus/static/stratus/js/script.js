@@ -35,6 +35,22 @@ $(document).ready( function(){
 		document.location = loc;
 	})
 
+	// ----------------- OPEN URL --------------------
+	$("#open_preview").click( function(){
+		var url = this.href
+		tabs.mk_tab(url, url );
+		pages.hide_current();
+		var tmp= $("#url_template").html().replace("sssss", url );
+		var new_page = pages.new_page( url, tmp );
+		return false
+	});
+
+	$('#content').delegate('.go', 'click', function(event) {
+		var self = $(this);
+		var src = self.prev().attr("value");
+		self.parent().next().attr("src", src);
+	});
+
 	// ----------------- PAGES --------------------
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
@@ -208,6 +224,7 @@ function PageManager( page_container, options ){
         //url = url.replace(/^.*#/, '');
         //$.history.load(url);
 		this.page_container.append("<div class='page' id='" + id + "' >" + data + "</div>");
+		return id
 	}
 	this.rm_page = function( url ){
 		$("#"+this.get_page_id(url)).remove();
