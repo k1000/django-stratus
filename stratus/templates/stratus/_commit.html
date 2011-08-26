@@ -10,12 +10,27 @@
         </div>
         <div class="message"> {{ commit.message }} </div>
         <dl class="robot">
-            <dd>commit:</dd><dt><a class="ajax" rel="#pages" href="{% url stratus-commit-view repo_name branch_name commit.hexsha %}">{{ commit.hexsha|truncatechars:16 }}</a> </dt>
+            <dd>commit:</dd>
+            <dt>
+            <a class="ajax" rel="#pages" href="{% url stratus-commit-view repo_name branch_name commit.hexsha %}" title="Commit {{ commit.hexsha|truncatechars:16 }}" >
+                    {{ commit.hexsha|truncatechars:16 }}
+                </a> 
+            </dt>
             
-            <dd>tree:</dd><dt><a class="ajax" rel="#pages" href="{% url stratus-commit-tree-view repo_name branch_name commit.hexsha "" %}">{{ commit.tree.hexsha|truncatechars:16 }}</a></dt>
+            <dd>tree:</dd>
+            <dt>
+                <a class="ajax" rel="#pages" href="{% url stratus-commit-tree-view repo_name branch_name commit.hexsha "" %}" title="Tree al {{ commit.hexsha|truncatechars:16 }} commit">
+                    {{ commit.tree.hexsha|truncatechars:16 }}
+                </a>
+            </dt>
 
             {% for parent in commit.parents %}
-            <dd>parent:</dd><dt><a class="ajax" rel="#pages" href="{% url stratus-commit-view repo_name branch_name parent.hexsha %}">{{ parent.hexsha|truncatechars:16 }}</a></dt>
+            <dd>parent:</dd>
+            <dt>
+                <a class="ajax" rel="#pages" href="{% url stratus-commit-view repo_name branch_name parent.hexsha %}" title="Commit {{ commit.hexsha|truncatechars:16 }}" >
+                    {{ parent.hexsha|truncatechars:16 }}
+                </a>
+            </dt>
             {% endfor %}
         </dl>
     	

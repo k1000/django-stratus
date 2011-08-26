@@ -18,9 +18,9 @@
 		{% for element in tree %}
 		<li class="{{ element.type }}">
 			{% if element.type == "tree" %}
-				<a href="{% url stratus-tree-view repo_name branch_name element.path %}" class="ajax" rel="#working_tree" title="{{ element.name }}/">{{ element.name }}/</a>
+				<a href="{% url stratus-tree-view repo_name branch_name element.path %}" class="ajax" rel="#working_tree" title="tree '{{ element.name }}/'">{{ element.name }}/</a>
 			{% else %}
-				<a href="{% url stratus-edit-file repo_name branch_name element.path %}" class="ajax" rel="#pages" title="{{ element.name }}" >{{ element.name }}</a>
+				<a href="{% url stratus-edit-file repo_name branch_name element.path %}" class="ajax" rel="#pages" title="Edit '{{ element.name }}'" >{{ element.name }}</a>
 				<small>{{ element.size|filesizeformat }}</small>
 
 			{% endif %}

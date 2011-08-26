@@ -38,33 +38,38 @@ $(document).ready( function(){
 	// ----------------- PAGES --------------------
 	$('#content').delegate('a.ajax', 'click', function(event) {
 		event.preventDefault();
-		if (this.rel == "#pages") {
+		var rel = this.rel;
+		var url = this.href;
+		if (rel == "#pages") {
 			// if its the same page do nothing
-			if ( this.href != pages.current) {
+			if ( url != pages.current) {
 				// hide current page
 				pages.hide_current();
 				//show if page is already loaded
-				if ( pages.pages[this.href] ){
-					tabs.activate_tab(this.href);
-					pages.show_page(this.href);
+				if ( pages.pages[url] ){
+					tabs.activate_tab(url);
+					pages.show_page(url);
 				//open new page
 				} else {
-					pages.open_page( this.href,
+					var title = this.title;
+					pages.open_page( url,
 						// create tab
 						function(url, data) {
-							var tab_text = $(data.html).find("h1").text().replace('"', "");
-					  		tabs.mk_tab(url, tab_text);
+							if ( !title ) {
+								title = $(data.html).find("h1").text().replace('"', "");
+							}
+					  		tabs.mk_tab(url, title);
 						}
 					)
 				}				
 			}
 		//load in current page
-		} else if (this.rel == "current") {
+		} else if (rel == "current" || rel == "prev" || rel == "next") {
 			var current = $(this).parents(".page");
-			get_page(this.href, current);
+			get_page(url, current);
 		//load in arbitrary container
 		} else {
-			get_page(this.href, $(this.rel));
+			get_page(url, $(rel));
 		}
 		return false;
 	});

@@ -10,8 +10,8 @@
 	</ul>
 
 	<p class="file_tools">
-		<a class="history ajax" rel="#pages" href="{% url stratus-history-file repo_name branch_name path %}" >history</a>
-		<a href="{% url stratus-get-file repo_name branch_name path %}" target="new" class="raw">raw</a>
+		<a class="history ajax" rel="#pages" href="{% url stratus-history-file repo_name branch_name path %}" title="'{{ path }}' history" >history</a>
+		<a href="{% url stratus-get-file repo_name branch_name path %}" target="new" class="raw" title="See raw file">raw</a>
 	</p>
 	
 	<h1>{{path}}</h1>
