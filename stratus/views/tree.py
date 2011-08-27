@@ -21,15 +21,16 @@ def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
         template_name = 'stratus/view_tree.html'
 
     if path:
-        if path[-1:] == "/":
-            path = path[:-1]
-
         the_tree = tree[path]
+
+        # if its file try to get file directory 
         if the_tree.type != "tree":
+            path = "/".join(dir_path[:-1])
             if len(dir_path) == 1:
                 the_tree = tree
             else:
-                the_tree = tree[dir_path[:-1]]
+                the_tree = tree[path]
+            path = "%s/" % path
     
     if request.method == 'POST':
         form = FileUploadForm(request.POST, request.FILES)
