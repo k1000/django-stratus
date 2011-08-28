@@ -393,3 +393,30 @@ button.delete {
   float:left;
   color: red;
 }
+
+/* ---------- MESSAGES -------------- */
+#messages {
+   position: fixed;
+   top: 20px;
+   right: 20px;
+   background: rgba( 0,0, 0, .8);
+   padding: 10px 10px 10px 30px;
+   width: 300px;
+   z-index: 12;
+   -moz-border-radius: 10px;
+   -webkit-border-radius: 10px;
+   border-radius: 10px;
+   border: 4px solid white;
+   box-shadow: 0 0 4px black:
+}
+#messages li {
+   color: #EFDD8B;
+}
+#messages a.close {
+   position: absolute;
+   right: 10px;
+   color: gray;
+}
+#messages a.close:hover {
+   color: red;
+}

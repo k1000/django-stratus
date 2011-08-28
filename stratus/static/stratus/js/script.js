@@ -10,14 +10,19 @@ $(document).ready( function(){
 		}
 	}
 	// initialize pages
+	
 	var pages = new PageManager($("#pages"));
 	var tabs = new TabManager($("ul.tabs"), pages);
 	var pagae1 = $(".page").html();
 	$(".page").remove();
-	pages.new_page( document.location.href, pagae1 );
+	if( !editors ){
+		var editors = new EditorManager();
+	}
+	
+	pages.new_page( window.location.pathname, pagae1 );
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
-	tabs.mk_tab( document.location.href , $(".page h1").html() );
+	tabs.mk_tab( window.location.pathname , $(".page h1").html() );
 	//$.history.init(loadContent);
 	// initialize tabs
 
@@ -51,11 +56,7 @@ $(document).ready( function(){
 		self.parent().next().attr("src", src);
 	});
 
-	// ----------------- PAGES --------------------
-	$('#content').delegate('a.ajax', 'click', function(event) {
-		event.preventDefault();
-		var rel = this.rel;
-		var url = this.href;
+	function delegate_actions( self, url, rel, title) {
 		if (rel == "contents") {
 			// if its the same page do nothing
 			if ( url != pages.current) {
@@ -67,13 +68,13 @@ $(document).ready( function(){
 					pages.show_page(url);
 				//open new page
 				} else {
-					tabs.mk_tab(url, this.title);
+					tabs.mk_tab(url, title);
 					pages.open_page( url );
 				}				
 			}
 		//load in current page
 		} else if (rel == "current" || rel == "prev" || rel == "next") {
-			var current = $(this).parents(".page");
+			var current = $(self).parents(".page");
 			get_page(url, current);
 		//load in arbitrary container
 		} else if (rel == "index" ) {
@@ -81,6 +82,11 @@ $(document).ready( function(){
 		} else {
 			get_page(url, $(rel));
 		}
+	}
+
+	// ----------------- PAGES --------------------
+	$('#content').delegate('a.ajax', 'click', function(event) {
+		delegate_actions(this, this.href, this.rel, this.title )
 		return false;
 	});
 
@@ -94,23 +100,76 @@ $(document).ready( function(){
 	});
 
 	$("#console_enter").click( function(){
-		
 		return false
 	})
 
-	// ----------------- FORMS --------------------
-	$('form.ajax').delegate('button', 'click', function(event) {
+	// ----------------- MESSAGES --------------------
+	$("#messages a.close").click( function(){
+		$("#messages").toggle();
+		return false
+	})
+
+	function show_messages( msgs ){
+		var msg_out = "";
+		for (var i = msgs.length - 1; i >= 0; i--) {
+			msg_out += "<li>" + msgs[i] + "</li>";
+		};
+		$("#messages ul").html( msg_out ).parent().toggle(true);
+	}
+
+	// ----------------- EDIT  --------------------
+	$(document).delegate('form.ajax_editor button', 'click', function(event) {
 		event.preventDefault();
 		var self = $(this);
 		var form = self.parents("form");
 		var url = form.attr("action");
 		var send_data = form.serialize();
 		var rel = form.attr("rel");
-		pages.hide_current();
+		editors.save(url);
+		$.ajax({
+			   type: "post",
+			   url: url,
+			   data: form.serialize(),
+			   dataType: "json",
+			   success: function(data){
+			   		if ( data.msg ) {
+			   			show_messages( data.msg );
+			   		}
+			   }
+		});
+	})
 
-		alert("kkk")
+	// ----------------- FORMS --------------------
+	$(document).delegate('form.ajax button', 'click', function(event) {
+		event.preventDefault();
+		var self = $(this);
+		var form = self.parents("form");
+		var url = form.attr("action");
+		var send_data = form.serialize();
+		var rel = form.attr("rel");
+		
+		$.ajax({
+			   type: form.attr("method"),
+			   url: url,
+			   data: form.serialize(),
+			   dataType: "json",
+			   success: function(data){
+			   		if ( data.msg ) {
+			   			show_messages( data.msg );
+			   		}
+			   		if (  rel == "contents") {
+			   			pages.hide_current();
+			   			pages.new_page( url, data.html );
+						var tab_text = $(data.html).find("h1").text().replace('"', "");
+						tabs.mk_tab(url, tab_text);
+			   		} else {
+			   			$(rel).html( data.html );
+			   		}
+			   }
+		});
+		/*
 		// upload forms
-		/*var upload = form.find("input[type=file]");
+		var upload = form.find("input[type=file]");
 		if ( upload ) {
 			var data = {}
 			form.find("input textarea").each( function( ) {
@@ -149,21 +208,6 @@ $(document).ready( function(){
 			   }
 			});
 		}*/
-		$.ajax({
-			   type: form.attr("method"),
-			   url: url,
-			   data: form.serialize(),
-			   dataType: "json",
-			   success: function(data){
-			   		if (  rel == "#pages") {
-			   			pages.new_page( url, data.html )
-						var tab_text = $(data.html).find("h1").text().replace('"', "");
-						tabs.mk_tab(url, tab_text);
-			   		}	
-			   }
-			});
-
-		return false
 	})
 })
 
@@ -249,6 +293,36 @@ function TabManager( tab_container, pages ){
 	}
 }
 
+function EditorManager( options ){
+	this.editors = {};
+	this.modes = [];
+	this.mk = function( url, mode, options ){
+		this.new_mode( mode );
+		var text_area = $("form[action='"+ url +"'] .file_source")[0];
+		var mode = mode;
+		this.editors[url] = CodeMirror.fromTextArea( text_area, {
+		  mode: {name: mode},
+		  lineNumbers: true,
+		  indentUnit: 4
+		});
+		return this.editors[url]
+	}
+	this.save = function( url ){
+		this.editors[url].save();
+	}
+	this.rm_editor = function( url ){
+		delete this.editors[url];
+	}
+	this.new_mode = function( mode, callback ){
+		for (var i = this.modes.length - 1; i >= 0; i--) {
+			if (mode === this.modes[i]) 
+			return
+		};
+		//var url = STRATUS_MEDIA_URL +"stratus/CodeMirror-2.12/mode/" + media + "/" + media + ".js";
+		//loadScript( url, callback )
+	}
+}
+
 
 function PageManager( page_container, options ){
 
@@ -311,4 +385,28 @@ function PageManager( page_container, options ){
 		this.set_current( url );
 		page.show();
 	}
+}
+
+// http://www.nczonline.net/blog/2009/07/28/the-best-way-to-load-external-javascript/
+function loadScript(url, callback){
+
+    var script = document.createElement("script")
+    script.type = "text/javascript";
+
+    if (script.readyState){  //IE
+        script.onreadystatechange = function(){
+            if (script.readyState == "loaded" ||
+                    script.readyState == "complete"){
+                script.onreadystatechange = null;
+                callback();
+            }
+        };
+    } else {  //Others
+        script.onload = function(){
+            callback();
+        };
+    }
+
+    script.src = url;
+    document.getElementsByTagName("head")[0].appendChild(script);
 }

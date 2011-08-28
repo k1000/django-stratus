@@ -27,16 +27,27 @@ def file_type_from_ext(ext):
         return ext
 
 def handle_uploaded_file( path, f):
-    destination = open(path, 'wb+')
-    for chunk in f.chunks():
-        destination.write(chunk)
-    destination.close()
+    try:
+        destination = open(path, 'wb+')
+        for chunk in f.chunks():
+            destination.write(chunk)
+        destination.close()
+        return True
+    except:
+        return False
+
 
 def write_file( file_path, file_source, mode="w"):
-    f = codecs.open(file_path, encoding='utf-8', mode=mode)
+    try:
+        f = codecs.open(file_path, encoding='utf-8', mode=mode)
+    except IOError:
+        return False
+
     try:
         f.write(file_source)
     except IOError:
         return False
-    finally:
-        return True
+    
+    import ipdb; ipdb.set_trace()
+    f.close()
+    return True

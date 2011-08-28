@@ -3,8 +3,9 @@ import os
 from django.http import  HttpResponse, Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 
-from _view_helpers import mix_response, make_crumbs, error_view
+from _view_helpers import mix_response, make_crumbs, error_view, message_convert
 from _git_helpers import get_repo, get_commit_tree, get_diff, mk_commit
 from _os_helpers import file_type_from_mime, write_file, handle_uploaded_file
 
@@ -76,7 +77,7 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
         form = FileUploadForm( request.POST, request.FILES )
         if form.is_valid():
             dir_path = form.cleaned_data["dir_path"] #!!! FIX security
-            #TODO check if file exist allready
+            #TODO check if file exist already
             repo = get_repo( repo_name )
 
             file_source = form.cleaned_data["file_source"]
@@ -111,7 +112,9 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
 @login_required
 def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
 
-    result_msg = file_source = ""
+    file_source = ""
+    msgs = []
+    json_convert = None
 
     if path in FILE_BLACK_LIST:
         msg = MSG_NOT_ALLOWED
@@ -124,14 +127,16 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
     repo = get_repo( repo_name )
     tree = repo.tree()
     
+    # edit only if exist in tree
     try:
         tree = tree[path]
     except KeyError:
-        msg = MSG_NO_FILE_IN_TREE
+        msg.append( MSG_NO_FILE_IN_TREE )
         return error_view( request, msg)
-
+    
+    # edit only if it is file
     if not tree.type  is "blob":
-        msg = MSG_CANT_VIEW
+        msgs.append( MSG_CANT_VIEW )
         return error_view( request, msg)
     
     mime = tree.mime_type.split("/")
@@ -153,16 +158,25 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
     if request.method == 'POST':
         form = form_class( request.POST, request.FILES )
         if form.is_valid():
-            if file_meta["mime_type"] == "text":
-                file_source = form.cleaned_data["file_source"]
-                write_file(file_path, file_source )
-            else:
-                handle_uploaded_file(file_path, request.FILES['file_source'])
 
-            message = form.cleaned_data["message"]
-            result_msg = mk_commit(repo, message, file_path )
+            if file_meta["mime_type"] == "text" or mime[1] in ["xml",]:
+                file_source = form.cleaned_data["file_source"]
+                file_writen = write_file(file_path, file_source )
+            else:
+                file_writen = handle_uploaded_file(file_path, request.FILES['file_source'])
+            
+            if file_writen:
+                msgs.append( "File has been saved" )
+                message = form.cleaned_data["message"]
+                msg = mk_commit(repo, message, file_path )
+                msgs.append( msg )
+            else:
+                msgs.append( "Error. File have not been written" )
         else:
-            result_msg = MSG_COMMIT_ERROR
+            msgs.append( form.errors )
+
+        if request.is_ajax():
+            json_convert = message_convert
     else:
         if file_meta["mime_type"] in EDITABLE_MIME_TYPES:
             file_source = tree.data_stream[3].read
@@ -180,7 +194,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         file_source = file_source,
         breadcrumbs = make_crumbs(path),
         file_meta = file_meta,
-        result_msg = result_msg,
+        msg = msgs,
         repo_name = repo_name,
         branch_name = branch,
         delete_form = FileDeleteForm( initial={"message":MSG_DELETE % path }),
@@ -193,11 +207,13 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         context["img_base"] = base64.b64encode( file_source )
         from getimageinfo import getImageInfo
         context["img_meta"] = getImageInfo( file_source )
-        
+    
     return mix_response( 
         request, 
         'stratus/edit.html', 
-        context)
+        context,
+        json_convert,
+        )
 
 @login_required
 def view(request, repo_name, branch, path, commit_sha=None,):

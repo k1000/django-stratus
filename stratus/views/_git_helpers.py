@@ -7,16 +7,15 @@ MSG_COMMIT_ERROR = "There were problems with making commit"
 MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
 
 def mk_commit(repo, message, path ):
+    result_msg = ""
     git = repo.git
-    #index = repo.index 
     try:
-        git.add(path)    
-        commit_result = git.commit("-m", """%s""" % message)
+        git.add(path)
+        result_msg = git.commit("-am", """%s""" % message)
         #commit_result = index.commit("""%s""" % message)
-    except GitCommandError:
+    except GitCommandError, e:
         result_msg = MSG_COMMIT_ERROR
-    else:
-        result_msg = MSG_COMMIT_SUCCESS % commit_result
+
     return result_msg
 
 def get_commit( repo, commit_sha ):

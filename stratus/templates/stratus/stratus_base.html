@@ -22,7 +22,7 @@
 
 {% if repo_name and branch_name %}
 <div id="project_tools">
-	<form method="get" action="{% url stratus-search repo_name branch_name %}" class="serch_form ajax" rel="#pages">
+	<form method="get" action="{% url stratus-search repo_name branch_name %}" class="serch_form ajax" rel="contents">
 		<p>
 			<input type="text" name="query" id="id_query" value="{{ query }}" /> 
 			<button>SEARCH</button>
@@ -40,11 +40,27 @@
 
 
 {% block content %}
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/jquery.ajaxfileupload.js" charset="utf-8"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.js"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/runmode.js"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/overlay.js"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/script.js"></script>
+
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/css/style.css" />
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.css" /> 
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/css/theme_dark.css" />
 
 <div class="gitter">
+	<div id="messages" {% if not msg %} style="display: none;" {% endif %}>
+		<a href="#" class="close" title="close">x</a>
+		<ul>
+		{% for message in msg %}
+			<li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	</div>
 {% if branch_name %}
 	<p><a href="#" id="toogle_files" class="toggle" rel="#tree">Files:</a></p>
 	<div id="working_tree">
@@ -78,20 +94,15 @@
 
 
 
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
-<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/jquery.ajaxfileupload.js" charset="utf-8"></script>
-<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/script.js"></script>
-<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.js"></script>
-<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/runmode.js"></script>
-<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/overlay.js"></script>
+
 
 {% if repo_name and branch_name %}
 <script type="text/javascript">
 $(document).ready( function(){
-	var repo = "{{repo_name}}";
-	var branch = "{{ branch_name }}";
-	var path = "{{path}}";
+	var REPO = "{{repo_name}}";
+	var BRANCH = "{{ branch_name }}";
+	var PATH = "{{path}}";
+	var STRATUS_MEDIA_URL = "{{ STRATUS_MEDIA_URL }}";
 
 	// ------------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){

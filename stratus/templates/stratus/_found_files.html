@@ -2,7 +2,7 @@
 	<h1>"{{ query }}" found in {{ found_files|length }} files. </h1>
 	<ul class="list">
 	{% for file_name in found_files %}
-		<li><a href="{% url stratus-edit-file repo_name branch_name file_name %}" class="ajax" rel="#pages" >{{ file_name }}</a></li>
+		<li><a href="{% url stratus-edit-file repo_name branch_name file_name %}" class="ajax" rel="contents" title="'{{ file_name }}' Edit" >{{ file_name }}</a></li>
 	{% endfor %}
 	</ul>
 

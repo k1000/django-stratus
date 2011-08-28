@@ -16,20 +16,23 @@ def git_to_dict( blob ):
 
 # json helper
 def to_json(python_object):
-
     if isinstance(python_object, (git.Blob, git.Tree) ):
         return git_to_dict( python_object )
 
     if isinstance(python_object, stratus.forms.FileUploadForm ):
         return python_object.as_p()
-    
     return None
     #raise TypeError(repr(python_object) + ' is not JSON serializable')
 
+def message_convert( request, template_name, context ):
+    context_out = {"msg": context["msg"]}  
+    print context_out
+    return {"msg": context["msg"]}
+
 def partial_json_convert( request, template_name, context ):
     partial_prefix = "_"
+    
     tmpl_dir = template_name.split("/")
-        
     partial_template_path = "/".join( [ tmpl_dir[:-1][0], "%s%s" % (partial_prefix, tmpl_dir[-1:][0]) ] )
 
     context.update( csrf(request) )
@@ -40,17 +43,17 @@ def partial_json_convert( request, template_name, context ):
             request,
             template_name,
             context)
-    else:
-        context["html"] = partial
+    
+    context_out = {"html": partial }
         
-    return context
+    return context_out
 
     
 def mix_response(request, template_name, context, json_convert=None):
 
     if request.is_ajax():
         if json_convert:
-            response_dict = json_convert( template_name, context )
+            response_dict = json_convert( request, template_name, context )
         else:
             response_dict = partial_json_convert(request, template_name, context )
 
@@ -76,4 +79,3 @@ def make_crumbs( path ):
         
     #breadcrumbs.append( (bread[-1], "#") )
     return breadcrumbs
-

@@ -1,6 +1,10 @@
-	<form action="{% url stratus-edit-file repo_name branch_name path %}" method="post" enctype="multipart/form-data" class="ajax" rel="next" >
+{% if file_meta and file_meta.type != "text/plain" %}
+	<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
+{% endif %}
+
+	<form action="{% url stratus-edit-file repo_name branch_name path %}" method="post" class="ajax_editor" rel="#messages" >
 		<div>
-			<textarea name="file_source" class="file_source">{{ file_source }}<textarea> 
+			<textarea name="file_source" rows="10" cols="40" class="file_source">{{ file_source }}</textarea> 
 		</div>
 		<div class="msg">
 			{{ form.message.label }}
@@ -8,13 +12,29 @@
 			{{ form.message.errors }}
 		</div>
 		{% csrf_token %}
-		<p><button>COMMIT</button></p>
+		<p><button class="commit">COMMIT</button></p>
+
+		<script type="text/javascript"> 
+
+		{% if file_meta and file_meta.type != "text/plain" %}
+			var mode = "{{ file_meta.type }}";
+		{% endif %}
+
+		if( !editors ){
+			var editors = new EditorManager();
+		}
+		var editor = editors.mk( "{% url stratus-edit-file repo_name branch_name path %}", mode );
+
+		{% if file_mime.type == "css" or file_mime.type == "html"%}
+		zen_textarea.setup({pretty_break: true})
+		{% endif %}
+
+		</script> 
+
 	</form>
 
 {# <script type="text/javascript" src="{{ GITTER_MEDIA_URL }}stratus/python-complete.js"></script> #}
-{% if file_meta and file_meta.type != "text/plain" %}
-	<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/mode/{{ file_meta.type }}/{{ file_meta.type }}.js"></script>
-{% endif %}
+
 
 {% if file_meta.type == "css" or file_meta.type == "html" %}
 <a href="https://github.com/sergeche/zen-coding/blob/master/plugins/codemirror/zen_editor.js#L241" target="new"><img src="{{ STRATUS_MEDIA_URL }}stratus/zen-textarea/zc-powered.png" alt="zen powered" /></a>
@@ -49,18 +69,3 @@
 
 {% endif %}
 
-<script type="text/javascript"> 
-var editor = CodeMirror.fromTextArea(  $("#edit_{{repo_name}}_{{branch_name}}_{{ path|slugify  }} .file_source")[0], {
-  mode: {name: "{{ file_meta.type }}"},
-  lineNumbers: true,
-  indentUnit: 4,
-  onCursorActivity: function() {
-    editor.setLineClass(hlLine, null);
-    hlLine = editor.setLineClass(editor.getCursor().line, "activeline");
-  }
-});
-var hlLine = editor.setLineClass(0, "activeline");
-{% if file_mime.type == "css" or file_mime.type == "html"%}
-zen_textarea.setup({pretty_break: true})
-{% endif %}
-</script> 
