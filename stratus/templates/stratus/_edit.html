@@ -28,7 +28,7 @@
 		{% if file_meta.mime_type == "image" %}
 		<img width="{{ img_meta.1}}" height="{{ img_meta.2}}" src="{% url stratus-get-file repo_name branch_name path %}" />
 
-		<small class=="img_meta" >image: "{{ img_meta.0 }}" {{ img_meta.1}}x{{ img_meta.2}}px</small>
+		<!-- <small class=="img_meta" >image: "{{ img_meta.0 }}" {{ img_meta.1}}x{{ img_meta.2}}px</small> -->
 
 		{% endif %}
 		<form action="{% url stratus-edit-file repo_name branch_name path %}" method="post" enctype="multipart/form-data" class="ajax" rel="next" >

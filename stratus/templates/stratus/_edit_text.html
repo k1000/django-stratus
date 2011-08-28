@@ -4,7 +4,7 @@
 
 	<form action="{% url stratus-edit-file repo_name branch_name path %}" method="post" class="ajax_editor" rel="#messages" >
 		<div>
-			<textarea name="file_source" rows="10" cols="40" class="file_source">{{ file_source }}</textarea> 
+			<textarea name="file_source" rows="10" cols="40" class='{% if file_meta and file_meta.type != "text/plain" %}{{ file_meta.type }}{% endif %}'>{{ file_source }}</textarea> 
 		</div>
 		<div class="msg">
 			{{ form.message.label }}
@@ -20,10 +20,9 @@
 			var mode = "{{ file_meta.type }}";
 		{% endif %}
 
-		if( !editors ){
-			var editors = new EditorManager();
-		}
-		var editor = editors.mk( "{% url stratus-edit-file repo_name branch_name path %}", mode );
+		/*if( editors ){
+			editors.mk( "{% url stratus-edit-file repo_name branch_name path %}", mode );
+		}*/
 
 		{% if file_mime.type == "css" or file_mime.type == "html"%}
 		zen_textarea.setup({pretty_break: true})

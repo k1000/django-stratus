@@ -20,7 +20,7 @@
 			{% if element.type == "tree" %}
 				<a href="{% url stratus-tree-view repo_name branch_name element.path %}" class="ajax" rel="index" title="tree '{{ element.name }}/'">{{ element.name }}/</a>
 			{% else %}
-				<a href="{% url stratus-edit-file repo_name branch_name element.path %}" class="ajax" rel="contents" title="'{{ element.name }}' edit" >{{ element.name }}</a>
+				<a href="{% url stratus-edit-file repo_name branch_name element.path %}" class="ajax" rel="edit" title="'{{ element.name }}' edit" >{{ element.name }}</a>
 				<small>{{ element.size|filesizeformat }}</small>
 
 			{% endif %}

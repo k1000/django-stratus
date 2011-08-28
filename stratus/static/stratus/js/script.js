@@ -1,3 +1,4 @@
+var editors = null;
 $(document).ready( function(){
 	// initialize from history
 	//http://tkyk.github.com/jquery-history-plugin/#demos
@@ -15,16 +16,15 @@ $(document).ready( function(){
 	var tabs = new TabManager($("ul.tabs"), pages);
 	var pagae1 = $(".page").html();
 	$(".page").remove();
-	if( !editors ){
-		var editors = new EditorManager();
-	}
-	
+	var editors = new EditorManager();
+	var file_browser = new FileBrowserManager( tree_path );
+
 	pages.new_page( window.location.pathname, pagae1 );
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
 	tabs.mk_tab( window.location.pathname , $(".page h1").html() );
 	//$.history.init(loadContent);
-	// initialize tabs
+
 
 	// ----------------- FILES --------------------
 	$("#toogle_files").click( function(event){
@@ -56,8 +56,15 @@ $(document).ready( function(){
 		self.parent().next().attr("src", src);
 	});
 
+	// ----------------- PAGES --------------------
+	$('#content').delegate('a.ajax', 'click', function(event) {
+		delegate_actions(this, this.pathname, this.rel, this.title )
+		return false;
+	});
+
 	function delegate_actions( self, url, rel, title) {
-		if (rel == "contents") {
+		//content
+		if (rel == "contents" || rel == "edit" ) {
 			// if its the same page do nothing
 			if ( url != pages.current) {
 				// hide current page
@@ -69,7 +76,13 @@ $(document).ready( function(){
 				//open new page
 				} else {
 					tabs.mk_tab(url, title);
-					pages.open_page( url );
+					if (rel == "edit" ) {
+						pages.open_page( url, function(url, data){ 
+							editors.mk( url );
+						});
+					} else {
+						pages.open_page( url );
+					}
 				}				
 			}
 		//load in current page
@@ -78,17 +91,13 @@ $(document).ready( function(){
 			get_page(url, current);
 		//load in arbitrary container
 		} else if (rel == "index" ) {
+			//get_page(url, $("#working_tree"));
 			get_page(url, $("#working_tree"));
+			//file_browser.open( url );
 		} else {
 			get_page(url, $(rel));
 		}
 	}
-
-	// ----------------- PAGES --------------------
-	$('#content').delegate('a.ajax', 'click', function(event) {
-		delegate_actions(this, this.href, this.rel, this.title )
-		return false;
-	});
 
 	// ----------------- CONSOLE --------------------
 	$("#console h4").click( function(){
@@ -123,9 +132,10 @@ $(document).ready( function(){
 		var self = $(this);
 		var form = self.parents("form");
 		var url = form.attr("action");
-		var send_data = form.serialize();
 		var rel = form.attr("rel");
 		editors.save(url);
+		var send_data = form.serialize();
+		
 		$.ajax({
 			   type: "post",
 			   url: url,
@@ -167,6 +177,7 @@ $(document).ready( function(){
 			   		}
 			   }
 		});
+
 		/*
 		// upload forms
 		var upload = form.find("input[type=file]");
@@ -191,7 +202,7 @@ $(document).ready( function(){
 			      'onCancel': function() {
 			        console.log('no file selected');
 			      }
-			    });
+		    });
 		// other forms
 		} else {
 			$.ajax({
@@ -237,6 +248,23 @@ function get_page(url, rel){
 		rel.html( data.html  )
 	}, "json")
 }
+
+function FileBrowserManager( path ){
+	this.container = $("#working_tree");
+	this.current_path = path;
+
+	get_page(path, this.container);
+
+	this.refresh = function(){
+		this.open( this.current_path );
+	}
+
+	this.open = function( url ){
+		this.current_path = url;
+		get_page(url, this.container);
+	}
+}
+
 
 function TabManager( tab_container, pages ){
 	this.tab_container = tab_container;
@@ -297,15 +325,23 @@ function EditorManager( options ){
 	this.editors = {};
 	this.modes = [];
 	this.mk = function( url, mode, options ){
-		this.new_mode( mode );
-		var text_area = $("form[action='"+ url +"'] .file_source")[0];
-		var mode = mode;
-		this.editors[url] = CodeMirror.fromTextArea( text_area, {
-		  mode: {name: mode},
-		  lineNumbers: true,
-		  indentUnit: 4
+		/*
+		this.new_mode( mode, function() {
+			//console.log( url )
+			this.activate_editor( url, mode );
 		});
-		return this.editors[url]
+		*/
+
+		var text_area = $("form[action='"+ url +"'] textarea[name=file_source]");
+
+		var mode = (mode)? mode : text_area.attr('class');
+
+		var code_mirror = CodeMirror.fromTextArea( text_area[0], {
+			mode: {name: mode},
+			lineNumbers: true,
+			indentUnit: 4
+		});
+		this.editors[url] = code_mirror;
 	}
 	this.save = function( url ){
 		this.editors[url].save();
@@ -316,10 +352,13 @@ function EditorManager( options ){
 	this.new_mode = function( mode, callback ){
 		for (var i = this.modes.length - 1; i >= 0; i--) {
 			if (mode === this.modes[i]) 
-			return
+			return callback()
 		};
-		//var url = STRATUS_MEDIA_URL +"stratus/CodeMirror-2.12/mode/" + media + "/" + media + ".js";
-		//loadScript( url, callback )
+		if (mode){
+			var url = STRATUS_MEDIA_URL +"stratus/CodeMirror-2.12/mode/" + mode + "/" + mode + ".js";
+			loadScript( url, callback )		
+		}
+
 	}
 }
 
@@ -366,10 +405,10 @@ function PageManager( page_container, options ){
 		var url = url;
 		var call_back = call_back;
 		$.get(url, function(data) {
+			self.new_page(url, data.html );
 			if (call_back ) {
 				call_back( url, data)
 			}
-			self.new_page(url, data.html );
 		}, "json")
 	}
 	this.hide_current = function( ){
