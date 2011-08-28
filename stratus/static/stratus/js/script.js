@@ -335,7 +335,7 @@ function EditorManager( options ){
 		var text_area = $("form[action='"+ url +"'] textarea[name=file_source]");
 
 		var mode = (mode)? mode : text_area.attr('class');
-
+		
 		var code_mirror = CodeMirror.fromTextArea( text_area[0], {
 			mode: {name: mode},
 			lineNumbers: true,
