@@ -7,9 +7,7 @@ import settings
 from views import get_commits
 
 class RecentCommits(Feed):
-    title = u"Observatorio Tecnológico" 
     link = "/pages/"
-    description = u"últimas entradas del Observatorio Tecnológico"
     language = settings.PAGE_DEFAULT_LANGUAGE
     
     def get_object(self, request, beat_id):
@@ -26,4 +24,4 @@ class RecentCommits(Feed):
         return get_commits(repo, branch)
     
     def get_title(self):
-        pass
+        return """Recent commits on local branch"""

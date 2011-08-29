@@ -194,7 +194,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         file_source = file_source,
         breadcrumbs = make_crumbs(path),
         file_meta = file_meta,
-        msg = msgs,
+        msg = msgs.reverse(),
         repo_name = repo_name,
         branch_name = branch,
         delete_form = FileDeleteForm( initial={"message":MSG_DELETE % path }),
