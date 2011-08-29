@@ -39,6 +39,12 @@ TODO
     * multimpe views 
     * realtime social edditing http://code.google.com/p/google-mobwrite/wiki/Theory
 
+
+DEPENDENCIES
+------------
+    * https://github.com/valums/file-uploader
+    
+    
 LICENSE
 -------
 
