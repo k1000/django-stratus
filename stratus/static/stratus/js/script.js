@@ -18,11 +18,12 @@ $(document).ready( function(){
 	$(".page").remove();
 	var editors = new EditorManager();
 	var file_browser = new FileBrowserManager( tree_path );
-
-	pages.new_page( window.location.pathname, pagae1 );
+    
+    var loc = window.location.pathname;
+	pages.new_page( loc, pagae1 );
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
-	tabs.mk_tab( window.location.pathname , $(".page h1").html() );
+	tabs.mk_tab( loc , $(".page h1").html() );
 	//$.history.init(loadContent);
 
 
@@ -57,7 +58,7 @@ $(document).ready( function(){
 	});
 
 	// ----------------- PAGES --------------------
-	$('#content').delegate('a.ajax', 'click', function(event) {
+	$(document).delegate('a.ajax', 'click', function(event) {
 		delegate_actions(this, this.pathname, this.rel, this.title )
 		return false;
 	});
