@@ -1,7 +1,7 @@
 About
 -----
 
-*django-commitlog* - git integrated online developement.
+*django-stratus* - git integrated online developement.
 Known to work in Django 1.3
 
 Features
