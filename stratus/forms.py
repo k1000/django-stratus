@@ -28,5 +28,5 @@ class RenameForm(forms.Form):
 	new_name = forms.CharField()
 
 class SearchForm(forms.Form):
-	"""docstring forss FileEditForm"""
+	"""docstring forss FileEdssitForm"""
 	query = forms.CharField()
