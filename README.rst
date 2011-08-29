@@ -37,6 +37,7 @@ Installation
 TODO
 ----
     * multimpe views 
+    * realtime social edditing http://code.google.com/p/google-mobwrite/wiki/Theory
 
 LICENSE
 -------
