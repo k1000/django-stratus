@@ -24,15 +24,15 @@ Installation
 
 2. Download and install::
 
-        git clone git@github.com:k1000/django-commitlog.git
-        cd django-commitlog
+        git clone https://github.com/k1000/django-stratus
+        cd django-stratus
         python setup.py install
 
    or using pip::     
     
-        pip install -e git@github.com:k1000/django-commitlog.git#egg=commitlog
+        pip install -e git+https://github.com/k1000/django-stratus#egg=stratus
 
-3. Add "commitlog" to your INSTALLED_APPS in "settings.py" 
+3. Add "stratus" to your INSTALLED_APPS in "settings.py" 
 
 TODO
 ----
@@ -44,5 +44,5 @@ LICENSE
 django-stratus is released under the MIT License. See the LICENSE_ file for more
 details.
 
-.. _LICENSE: http://github.com:k1000/django-commitlog/blob/master/LICENSE
+.. _LICENSE: https://github.com/k1000/django-stratus/blob/master/LICENSE
 
