@@ -158,12 +158,12 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
     if request.method == 'POST':
         form = form_class( request.POST, request.FILES )
         if form.is_valid():
-
+            file_abs_path = os.path.join( repo.working_dir, file_path)
             if file_meta["mime_type"] == "text" or mime[1] in ["xml",]:
                 file_source = form.cleaned_data["file_source"]
-                file_writen = write_file(file_path, file_source )
+                file_writen = write_file(file_abs_path, file_source )
             else:
-                file_writen = handle_uploaded_file(file_path, request.FILES['file_source'])
+                file_writen = handle_uploaded_file(file_abs_path, request.FILES['file_source'])
             
             if file_writen:
                 msgs.append( "File has been saved" )
