@@ -6,7 +6,7 @@ div.CodeMirror {
 	font: 1em/1.3em "Andale Mono", "Courier New", Courier, mono;
 }
 .CodeMirror-cursor{
-	color: white;
+	border-left: 1px solid white !important;
 }
 .cm-s-default span.cm-keyword {color: #e3a2ba;}
 .cm-s-default span.cm-atom {color: #d3e8e1;}
