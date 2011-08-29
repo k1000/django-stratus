@@ -26,8 +26,21 @@ $(document).ready( function(){
 	tabs.mk_tab( loc , $(".page h1").html() );
 	//$.history.init(loadContent);
 
+	var uploader = new qq.FileUploader({
+	    // pass the dom node (ex. $(selector)[0] for jQuery users)
+	    element: document.getElementById('id_file_upload'),
+	    // get other data
+	    params: { upload_dir: document.getElementById('id_upload_dir') },
+	    // path to server-side upload script
+	    action: UPLOAD_URL,
+	    onComplete: function(id, fileName, data){
+	    	alert( data );
+	    	dispatch_form_respond(url, rel, data);
+	    }
+	}); 
 
-	// ----------------- FILES --------------------
+
+	// ----------------- FILE BROWSER --------------------
 	$("#toogle_files").click( function(event){
 		event.preventDefault();
 		$(this).removeClass("open").addClass("closed");
@@ -43,7 +56,7 @@ $(document).ready( function(){
 
 	// ----------------- OPEN URL --------------------
 	$("#open_preview").click( function(){
-		var url = this.href
+		var url = this.href;
 		tabs.mk_tab(url, url );
 		pages.hide_current();
 		var tmp= $("#url_template").html().replace("sssss", url );
@@ -59,11 +72,11 @@ $(document).ready( function(){
 
 	// ----------------- PAGES --------------------
 	$(document).delegate('a.ajax', 'click', function(event) {
-		delegate_actions(this, this.pathname, this.rel, this.title )
+		dispatch_respond(this, this.pathname, this.rel, this.title )
 		return false;
 	});
 
-	function delegate_actions( self, url, rel, title) {
+	function dispatch_respond( self, url, rel, title) {
 		//content
 		if (rel == "contents" || rel == "edit" ) {
 			// if its the same page do nothing
@@ -92,9 +105,7 @@ $(document).ready( function(){
 			get_page(url, current);
 		//load in arbitrary container
 		} else if (rel == "index" ) {
-			//get_page(url, $("#working_tree"));
-			get_page(url, $("#working_tree"));
-			//file_browser.open( url );
+			file_browser.open( url );
 		} else {
 			get_page(url, $(rel));
 		}
@@ -138,9 +149,7 @@ $(document).ready( function(){
 		var self = $(this);
 		var form = self.parents("form");
 		var url = form.attr("action");
-		var rel = form.attr("rel");
 		editors.save(url);
-		var send_data = form.serialize();
 		
 		$.ajax({
 			   type: "post",
@@ -161,72 +170,55 @@ $(document).ready( function(){
 		var self = $(this);
 		var form = self.parents("form");
 		var url = form.attr("action");
-		var send_data = form.serialize();
 		var rel = form.attr("rel");
 		
-		$.ajax({
-			   type: form.attr("method"),
-			   url: url,
-			   data: form.serialize(),
-			   dataType: "json",
-			   success: function(data){
-			   		if ( data.msg ) {
-			   			show_messages( data.msg );
-			   		}
-			   		if (  rel == "contents") {
-			   			pages.hide_current();
-			   			pages.new_page( url, data.html );
-						var tab_text = $(data.html).find("h1").text().replace('"', "");
-						tabs.mk_tab(url, tab_text);
-			   		} else {
-			   			$(rel).html( data.html );
-			   		}
-			   }
-		});
+		var to_upload = form.find("input[type=file]");
+		// if there is file to upload
+		if ( to_upload ) {
 
-		/*
-		// upload forms
-		var upload = form.find("input[type=file]");
-		if ( upload ) {
-			var data = {}
-			form.find("input textarea").each( function( ) {
-				data[this.name] = this.value;
-			})
-			upload[0].ajaxfileupload({
-			      'action': url,
-			      'params': data,
-			      'onComplete': function(response) {
-				        if (  rel == "#pages") {
-				   			pages.new_page( url, data.html )
-							var tab_text = $(data.html).find("h1").text().replace('"', "");
-							tabs.mk_tab(url, tab_text);
-				   		}
-			      },
-			      'onStart': function() {
-			        if(weWantedTo) return false; // cancels upload
-			      },
-			      'onCancel': function() {
-			        console.log('no file selected');
-			      }
-		    });
-		// other forms
+			if (to_upload[0].files.length) {
+				// https://github.com/valums/file-uploader
+				var uploader = new qq.FileUploader({
+				    // pass the dom node (ex. $(selector)[0] for jQuery users)
+				    element: to_upload[0],
+				    // get other data
+				    params: form.serializeArray(),
+				    // path to server-side upload script
+				    action: url,
+				    onComplete: function(id, fileName, data){
+				    	dispatch_form_respond(url, rel, data)
+				    }
+				}); 
+			} else {
+				show_messages( ["You must select file to upload"] );
+			}
 		} else {
 			$.ajax({
-			   type: form.attr("method"),
-			   url: url,
-			   data: form.serialize(),
-			   dataType: "json",
-			   success: function(data){
-			   		if (  rel == "#pages") {
-			   			pages.new_page( url, data.html )
-						var tab_text = $(data.html).find("h1").text().replace('"', "");
-						tabs.mk_tab(url, tab_text);
-			   		}	
-			   }
+				type: form.attr("method"),
+				url: url,
+				data: form.serialize(),
+				dataType: "json",
+				success: function(data){
+					dispatch_form_respond(url, rel, data)
+				}
 			});
-		}*/
+		}
 	})
 })
+
+function dispatch_form_respond(url, rel, data){
+	if ( data.msg ) {
+		show_messages( data.msg );
+	}
+	if (  rel == "contents") {
+		pages.hide_current();
+		pages.new_page( url, data.html );
+		var tab_text = $(data.html).find("h1").text().replace('"', "");
+		tabs.mk_tab(url, tab_text);
+	} else {
+		$(rel).html( data.html );
+	}
+}
 
 function get_prev_next( obj, current ) {
 	// gets previous and next on both sides of current
@@ -256,7 +248,7 @@ function get_page(url, rel){
 }
 
 function FileBrowserManager( path ){
-	this.container = $("#working_tree");
+	this.container = $("#file_browser");
 	this.current_path = path;
 
 	get_page(path, this.container);

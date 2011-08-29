@@ -23,6 +23,7 @@ MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
 MSG_RENAME_ERROR = "There been an error during renaming the file %s to %s."
 MSG_RENAME_SUCCESS = "File %s has been renamed to %s"
 MSG_DELETE = "File '%s' has been deleted"
+MSG_CANT_SAVE_FILE = "Error. File hasn't been saved"
 
 @login_required
 def new(request, repo_name, branch=REPO_BRANCH, path=None ):
@@ -71,26 +72,32 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
 
 @login_required
 def upload(request, repo_name, branch=REPO_BRANCH ):
-    result_msg = file_source = path = ""
+    file_source = path = ""
+    msgs = []
+    json_convert = None
 
     if request.method == 'POST':
         form = FileUploadForm( request.POST, request.FILES )
         if form.is_valid():
-            dir_path = form.cleaned_data["dir_path"] #!!! FIX security
+            dir_path = form.cleaned_data["upload_dir"] #!!! FIX security
             #TODO check if file exist already
             repo = get_repo( repo_name )
 
-            file_source = form.cleaned_data["file_source"]
+            file_source = form.cleaned_data["file_upload"]
             path = os.path.join( dir_path, file_source.name )
-            write_file(path, file_source )
+            file_writen = write_file(path, file_source )
+            if file_writen:
+                msg = "'%s' created" % path 
+                result_msg = mk_commit(repo, msg, path )
+                msgs.append( result_msg )
+            else:
+                msgs.append( MSG_CANT_SAVE_FILE )
 
-            msg = "'%s' created" % path 
-            result_msg = mk_commit(repo, msg, path )
-            messages.success(request, result_msg )
-
-            #return redirect('stratus-tree-view', repo_name, branch, dir_path  )
         else:
-            result_msg = MSG_COMMIT_ERROR
+            msgs.append( form.errors )
+
+        if request.is_ajax():
+            json_convert = message_convert
     else:
         form = FileUploadForm( initial={"message":"%s added" % path} )
     
@@ -98,15 +105,16 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         form= form,
         breadcrumbs = make_crumbs(path),
-        result_msg = result_msg,
+        msg = msgs,
         repo_name = repo_name,
         branch_name = branch,
         path = path,
     )
     return mix_response( 
         request, 
-        'stratus/new_file.html', 
-        context)
+        'stratus/upload_file.html', 
+        context,
+        json_convert,)
 
 
 @login_required
@@ -171,7 +179,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
                 msg = mk_commit(repo, message, file_path )
                 msgs.append( msg )
             else:
-                msgs.append( "Error. File have not been written" )
+                msgs.append( MSG_CANT_SAVE_FILE )
         else:
             msgs.append( form.errors )
 

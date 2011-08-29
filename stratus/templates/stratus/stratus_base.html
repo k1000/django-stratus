@@ -38,7 +38,7 @@
 {% block content %}
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
-<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/jquery.ajaxfileupload.js" charset="utf-8"></script>
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/fileuploader.js" charset="utf-8"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.js"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/overlay.js"></script>
 <!-- <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/mode/python/python.js"></script> -->
@@ -48,6 +48,7 @@
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/css/style.css" />
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.css" /> 
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/css/theme_dark.css" />
+<link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/css/fileuploader.css" />
 
 <div class="gitter">
 	<div id="messages" {% if not msg %} style="display: none;" {% endif %}>
@@ -59,9 +60,26 @@
 		</ul>
 	</div>
 {% if branch_name %}
-	<p><a href="#" id="toogle_files" class="toggle" rel="#tree">Files:</a></p>
-	<div id="working_tree">
+	<p><a href="#" id="toogle_files" class="toggle" rel="#browser">Files:</a></p>
+	<div id="browser">
+		<div id="file_browser" >
 {% block git_tree %}{% endblock git_tree %}
+		</div>
+		<p class="new_file">NEW FILE</p>
+		<form enctype="multipart/form-data" action="{% url stratus-upload-file repo_name branch_name %}" method="post" class="ajax" rel="#messages" >
+			<input type="hidden" value="" name="upload_dir" id="id_upload_dir" />
+			{% csrf_token %}
+			<div class="qq-uploader">
+				<div class="qq-upload-drop-area" style="display: none; ">
+					<span>Drop files here to upload</span>
+				</div>
+				<div id="id_file_upload">      
+				    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>         
+				</div>
+
+			</div>
+
+		</form>
 	</div>
 {% endif %}
 	<div id="toolbox">
@@ -100,6 +118,10 @@ var BRANCH = "{{ branch_name }}";
 var PATH = "{{path}}";
 var STRATUS_MEDIA_URL = "{{ STRATUS_MEDIA_URL }}";
 var CONSOLE_URL = "{% url stratus-consol repo_name %}";
+
+{% if repo_name and branch_name %}
+var UPLOAD_URL = "{% url stratus-upload-file repo_name branch_name %}";
+{% endif %}
 
 var tree_path =  {% if path %} '{% url stratus-tree-view repo_name branch_name path %}'
 {% else %} '{% url stratus-tree-view repo_name branch_name "" %}' {% endif %};

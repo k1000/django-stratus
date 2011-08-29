@@ -110,7 +110,7 @@ ul {
 	
 	overflow: hidden;
 }
-#working_tree {
+#browser {
 	float: left;
 	box-shadow: 0px -2px 3px #dedede;
 	width: 200px;
@@ -251,10 +251,10 @@ li.blob{
 li.tree{
 	background: url(/media/commitlog/images/directory.png) no-repeat 10px;
 }
-#working_tree .rename {
+#file_browser .rename {
 	display: none;
 }
-#working_tree ul.breadcrumbs {
+#file_browser ul.breadcrumbs {
   overflow: hidden;
   padding-left: 10px;
   margin-top: 16px;
