@@ -23,7 +23,7 @@
     {% for commits in commits_per_day %}
         <h3>{{ commits.grouper }}</h3>
         {% for commit in commits.list %}
-            {% include "stratus/_commit.html" %}
+            {% include "stratus/__commit.html" %}
         {% endfor %}
     {% endfor %}
 

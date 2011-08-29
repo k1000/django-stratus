@@ -4,8 +4,7 @@
 <p class="file_tools">
 	<a class="history ajax" ref="contents" href="{% url stratus-history-file repo_name branch_name path %}" title="History of '{{ path }}'">history</a>
 </p>
-<h1>File {{ path }} ({{ file_meta.size|filesizeformat }}) {% if commit %} at {{ commit.hexsha|truncatechars:6 }} commit {% endif %}
-</h1>
+<h1>File {{ path }} ({{ file_meta.size|filesizeformat }})</h1>
 
 
 {% if commit %}

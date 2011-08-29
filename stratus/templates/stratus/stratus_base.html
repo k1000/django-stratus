@@ -8,7 +8,7 @@
 		<li class="project">{{ repo_name }}</li>
 		{% endif %}
 		{% if repo_name and branch_name %}
-		<li>"<a class="ajax" rel="contents" href="{% url stratus-log repo_name branch_name %}"  >{{ branch_name }}</a>" branch</li>	
+		<li>"<a class="ajax" rel="contents" href="{% url stratus-log repo_name branch_name %}" title="Commits at {{branch_name}} branch" >{{ branch_name }}</a>" branch</li>	
 		{% endif %}
 
 {% block git_breadcrumbs %}{% endblock git_breadcrumbs %}
@@ -42,6 +42,7 @@
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/codemirror.js"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/lib/overlay.js"></script>
 <!-- <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/mode/python/python.js"></script> -->
+<script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/mode/diff/diff.js"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/js/script.js"></script>
 
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}stratus/css/style.css" />
