@@ -100,6 +100,11 @@ $(document).ready( function(){
 	}
 
 	// ----------------- CONSOLE --------------------
+	$("#console_enter").click(function( ){
+		var data = {"com":"git status"};
+		$('#console_output').load(CONSOLE_URL, data, function() {});
+	})
+
 	$("#console h4").click( function(){
 		$("#console .content").toggle()
 	})

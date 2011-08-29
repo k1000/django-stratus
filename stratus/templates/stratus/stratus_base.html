@@ -102,25 +102,11 @@ var REPO = "{{repo_name}}";
 var BRANCH = "{{ branch_name }}";
 var PATH = "{{path}}";
 var STRATUS_MEDIA_URL = "{{ STRATUS_MEDIA_URL }}";
+var CONSOLE_URL = "{% url stratus-consol repo_name %}";
 
-// ----------------- TREE INIT --------------------
 var tree_path =  {% if path %} '{% url stratus-tree-view repo_name branch_name path %}'
 {% else %} '{% url stratus-tree-view repo_name branch_name "" %}' {% endif %};
 
-$(document).ready( function(){
-	
-	// ------------------- CONSOLE --------------------
-	$("#console_enter").click(function( ){
-		var data = {"com":"git status"};
-		$('#console_output').load("{% url stratus-consol repo_name %}", data, function() {});
-	})
-
-	
-	
-	//get_page(tree_path, $("#working_tree"));
-
-	//$("#tree").load(tree_path);
-})
 </script>
 {% endif %}	
 
