@@ -7,10 +7,10 @@ Known to work in Django 1.3
 Features
 --------
 
-* manage multimple GIT repositories
+* manage multimple Projects - GIT repositories
 * create/uplod/modify/delete files together with GIT commits
 * view commit history and its diffs for any file 
-* browse file tree in any point of the repo history
+* browse and view files as tehy was in any point of the repo history
 * editor syntax highliting (thanx to CodeMirror 2)
 * editor zen-coding for .html nad .css files ( thanx to zen-texarea.js )
 
@@ -36,12 +36,12 @@ Installation
 
 TODO
 ----
-    * support múltiple repositiories
+    * multimpe views 
 
 LICENSE
 -------
 
-django-commitlog is released under the MIT License. See the LICENSE_ file for more
+django-stratus is released under the MIT License. See the LICENSE_ file for more
 details.
 
 .. _LICENSE: http://github.com:k1000/django-commitlog/blob/master/LICENSE
