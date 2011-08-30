@@ -66,7 +66,7 @@
 {% block git_tree %}{% endblock git_tree %}
 		</div>
 		<p class="new_file">NEW FILE</p>
-		<form enctype="multipart/form-data" action="{% url stratus-upload-file repo_name branch_name %}" method="post" class="ajax" rel="#messages" >
+		<form enctype="multipart/form-data" action="{% url stratus-upload-file repo_name branch_name %}" method="post" >
 			<input type="hidden" value="" name="upload_dir" id="id_upload_dir" />
 			{% csrf_token %}
 			<div class="qq-uploader">
@@ -76,9 +76,7 @@
 				<div id="id_file_upload">      
 				    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>         
 				</div>
-
 			</div>
-
 		</form>
 	</div>
 {% endif %}

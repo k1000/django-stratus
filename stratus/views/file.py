@@ -4,6 +4,7 @@ from django.http import  HttpResponse, Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from _view_helpers import mix_response, make_crumbs, error_view, message_convert
 from _git_helpers import get_repo, get_commit_tree, get_diff, mk_commit
@@ -70,6 +71,9 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
         'stratus/new_file.html', 
         context)
 
+
+
+@csrf_exempt  #TODO 
 @login_required
 def upload(request, repo_name, branch=REPO_BRANCH ):
     file_source = path = ""
@@ -77,25 +81,38 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
     json_convert = None
 
     if request.method == 'POST':
-        form = FileUploadForm( request.POST, request.FILES )
-        if form.is_valid():
-            dir_path = form.cleaned_data["upload_dir"] #!!! FIX security
-            #TODO check if file exist already
-            repo = get_repo( repo_name )
+        from _os_helpers import ProgressBarUploadHandler
+        request.upload_handlers.insert(0, ProgressBarUploadHandler())
 
-            file_source = form.cleaned_data["file_upload"]
-            path = os.path.join( dir_path, file_source.name )
-            file_writen = write_file(path, file_source )
-            if file_writen:
-                msg = "'%s' created" % path 
-                result_msg = mk_commit(repo, msg, path )
-                msgs.append( result_msg )
-            else:
-                msgs.append( MSG_CANT_SAVE_FILE )
+        repo = get_repo( repo_name )
+        dir_path = request.GET.get("upload_dir") #!!! FIX security
+        file_name = request.GET.get("qqfile")
+        file_abs_path = os.path.join( repo.working_dir, dir_path, file_name)
 
+        print file_abs_path
+        if request.META['CONTENT_TYPE'] == 'application/octet-stream':
+            try:
+                destination = open(file_abs_path, 'wb+')
+                for chunk in request.raw_post_data:
+                    destination.write(chunk)
+                destination.close()
+            except:
+                file_writen = False
+            finally:
+                file_writen = True
         else:
-            msgs.append( form.errors )
+            file_writen = handle_uploaded_file(file_abs_path, request.FILES['file_source'])
 
+        if file_writen:
+            msgs.append( "File has been writen" )
+            message = "file %s has been commited" % os.path.join(dir_path, file_name)
+            msg = mk_commit(repo, message, file_name )
+            msgs.append( msg )
+            return HttpResponse('{ "success": true }', mimetype='application/javascript')
+        else:
+            msgs.append( MSG_CANT_SAVE_FILE )
+            return HttpResponse('{ "success": false }', mimetype='application/javascript')
+        
         if request.is_ajax():
             json_convert = message_convert
     else:

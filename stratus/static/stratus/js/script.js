@@ -20,22 +20,26 @@ $(document).ready( function(){
 	var file_browser = new FileBrowserManager( tree_path );
     
     var loc = window.location.pathname;
+
 	pages.new_page( loc, pagae1 );
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
 	tabs.mk_tab( loc , $(".page h1").html() );
 	//$.history.init(loadContent);
 
+	// http://valums.com/ajax-upload/
 	var uploader = new qq.FileUploader({
 	    // pass the dom node (ex. $(selector)[0] for jQuery users)
 	    element: document.getElementById('id_file_upload'),
 	    // get other data
-	    params: { upload_dir: document.getElementById('id_upload_dir') },
+	    params: { 
+		    upload_dir: document.getElementById('id_upload_dir').value
+	    	//csrftoken: $("input[name=csrfmiddlewaretoken]").val() 
+	   	},
 	    // path to server-side upload script
 	    action: UPLOAD_URL,
 	    onComplete: function(id, fileName, data){
-	    	alert( data );
-	    	dispatch_form_respond(url, rel, data);
+	    	dispatch_form_respond(UPLOAD_URL, "#message", data);
 	    }
 	}); 
 
@@ -135,14 +139,6 @@ $(document).ready( function(){
 		return false
 	})
 
-	function show_messages( msgs ){
-		var msg_out = "";
-		for (var i = msgs.length - 1; i >= 0; i--) {
-			msg_out += "<li>" + msgs[i] + "</li>";
-		};
-		$("#messages ul").html( msg_out ).parent().toggle(true);
-	}
-
 	// ----------------- EDIT  --------------------
 	$(document).delegate('form.ajax_editor button', 'click', function(event) {
 		event.preventDefault();
@@ -176,7 +172,7 @@ $(document).ready( function(){
 		// if there is file to upload
 		if ( to_upload ) {
 
-			if (to_upload[0].files.length) {
+			/*if (to_upload[0].files.length) {
 				// https://github.com/valums/file-uploader
 				var uploader = new qq.FileUploader({
 				    // pass the dom node (ex. $(selector)[0] for jQuery users)
@@ -191,7 +187,7 @@ $(document).ready( function(){
 				}); 
 			} else {
 				show_messages( ["You must select file to upload"] );
-			}
+			}*/
 		} else {
 			$.ajax({
 				type: form.attr("method"),
@@ -205,6 +201,14 @@ $(document).ready( function(){
 		}
 	})
 })
+
+function show_messages( msgs ){
+	var msg_out = "";
+	for (var i = msgs.length - 1; i >= 0; i--) {
+		msg_out += "<li>" + msgs[i] + "</li>";
+	};
+	$("#messages ul").html( msg_out ).parent().toggle(true);
+}
 
 function dispatch_form_respond(url, rel, data){
 	if ( data.msg ) {
