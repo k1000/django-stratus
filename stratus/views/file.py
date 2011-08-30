@@ -21,10 +21,12 @@ MSG_NO_FILE = "File hasn't been found."
 MSG_NO_FILE_IN_TREE = "File haven't been found under current tree."
 MSG_CANT_VIEW = "Can't view file."
 MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
-MSG_RENAME_ERROR = "There been an error during renaming the file %s to %s."
-MSG_RENAME_SUCCESS = "File %s has been renamed to %s"
-MSG_DELETE = "File '%s' has been deleted"
+MSG_RENAME_ERROR = u"There been an error during renaming the file %s to %s."
+MSG_RENAME_SUCCESS = u"File %s has been renamed to %s"
+MSG_DELETE = u"File '%s' has been deleted"
 MSG_CANT_SAVE_FILE = "Error. File hasn't been saved"
+MSG_UPLOAD_SUCCESS = u"File '%s' has been uploaded"
+MSG_COMMIT_SUCCESS = u"File '%s' has been commited"
 
 @login_required
 def new(request, repo_name, branch=REPO_BRANCH, path=None ):
@@ -87,7 +89,8 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
         repo = get_repo( repo_name )
         dir_path = request.GET.get("upload_dir") #!!! FIX security
         file_name = request.GET.get("qqfile")
-        file_abs_path = os.path.join( repo.working_dir, dir_path, file_name)
+        file_path = os.path.join(dir_path, unicode(filename, 'utf-8').encode('utf-8') )
+        file_abs_path = os.path.join( repo.working_dir, file_path)
 
         print file_abs_path
         if request.META['CONTENT_TYPE'] == 'application/octet-stream':
@@ -104,8 +107,9 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
             file_writen = handle_uploaded_file(file_abs_path, request.FILES['file_source'])
 
         if file_writen:
-            msgs.append( "File has been writen" )
-            message = u"file %s has been commited" % os.path.join(dir_path, file_name)
+             
+            msgs.append( MSG_UPLOAD_SUCCESS % file_path)
+            message = MSG_COMMIT_SUCCESS % file_path
             msg = mk_commit(repo, message, file_name )
             msgs.append( msg )
             return HttpResponse('{ "success": true }', mimetype='application/javascript')
