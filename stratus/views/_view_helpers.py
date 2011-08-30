@@ -24,10 +24,14 @@ def to_json(python_object):
     return None
     #raise TypeError(repr(python_object) + ' is not JSON serializable')
 
-def message_convert( request, template_name, context ):
-    context_out = {"msg": context["msg"]}  
-    print context_out
-    return {"msg": context["msg"]}
+def message_convert( request, template_name, context, white_list =  ["msg", "success"] ):
+    context_out ={}
+    
+    for key,value in context.keys():
+        if key in white_list:
+            context_out[key] = context[key]
+
+    return context_out
 
 def partial_json_convert( request, template_name, context ):
     partial_prefix = "_"
