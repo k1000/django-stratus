@@ -105,7 +105,7 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
 
         if file_writen:
             msgs.append( "File has been writen" )
-            message = "file %s has been commited" % os.path.join(dir_path, file_name)
+            message = u"file %s has been commited" % os.path.join(dir_path, file_name)
             msg = mk_commit(repo, message, file_name )
             msgs.append( msg )
             return HttpResponse('{ "success": true }', mimetype='application/javascript')

@@ -11,7 +11,7 @@ def mk_commit(repo, message, path ):
     git = repo.git
     try:
         git.add(path)
-        result_msg = git.commit("-am", """%s""" % message)
+        result_msg = git.commit("-am", u"""%s""" % message)
         #commit_result = index.commit("""%s""" % message)
     except GitCommandError, e:
         result_msg = MSG_COMMIT_ERROR
