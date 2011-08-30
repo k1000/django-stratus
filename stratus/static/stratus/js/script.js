@@ -53,9 +53,14 @@ $(document).ready( function(){
 
 	// ----------------- NEW FILE --------------------
 	$("#create_new_file").click( function(){
-		var loc = document.getElementById("cur_path").value + "/" +
-			document.getElementById("new_file_name").value;
-		document.location = loc;
+		var url = NEW_FILE_URL
+			//+ file_browser.current_path + "/"
+			+ document.getElementById("new_file_name").value;
+		pages.hide_current();
+		tabs.mk_tab(url, "new file "+ url );
+		pages.open_page( url, function(url, data){ 
+			editors.mk( url );
+		});
 	})
 
 	// ----------------- OPEN URL --------------------
@@ -74,7 +79,7 @@ $(document).ready( function(){
 		self.parent().next().attr("src", src);
 	});
 
-	// ----------------- PAGES --------------------
+	// ----------------- OPEN PAGES --------------------
 	$(document).delegate('a.ajax', 'click', function(event) {
 		dispatch_respond(this, this.pathname, this.rel, this.title )
 		return false;
@@ -243,11 +248,13 @@ function get_prev_next( obj, current ) {
 	return prev_next
 }
 
-function get_page(url, rel){
+function get_page(url, rel, callback){
 	var rel = rel;
 	var url = url; 
+	var callback = callback; 
 	$.get(url, function(data) {
 		rel.html( data.html  )
+		if ( callback) callback(url, rel, data);
 	}, "json")
 }
 

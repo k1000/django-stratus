@@ -30,8 +30,8 @@ MSG_COMMIT_SUCCESS = u"File '%s' has been commited"
 
 @login_required
 def new(request, repo_name, branch=REPO_BRANCH, path=None ):
-    result_msg = file_source = ""
-    form_class = TextFileEditForm
+    file_source = ""
+    msgs = []
 
     file_path = path #!!! FIX security
     #TODO check if file exist allready
@@ -40,29 +40,31 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
     )
 
     if request.method == 'POST':
-        form = FileUploadForm( request.POST, request.FILES )
+        form = TextFileEditForm( request.POST, request.FILES )
         if form.is_valid():
             repo = get_repo( repo_name )
 
             file_source = form.cleaned_data["file_source"]
-            write_file(file_path, file_source )
+            file_writen = write_file(file_path, file_source )
 
-            msg = form.cleaned_data["message"]
-            result_msg = mk_commit(repo, msg, file_path )
-            messages.success(request, result_msg ) 
+            if file_writen:
+                msg = form.cleaned_data["message"]
+                result_msg = mk_commit(repo, msg, file_path )
+                msgs.append( result_msg )
+            else:
+                msgs.append( "Error. file has been created" )
 
-            dir_path = "/".join( path.split("/")[:-1] )
-            return redirect('stratus-tree-view', repo_name, branch, dir_path  )
         else:
-            result_msg = MSG_COMMIT_ERROR
+            msgs.append( form.errors )
+
     else:
-        form = form_class( initial={"message":"%s added" % path} )
+        form = TextFileEditForm( initial={"message":"%s added" % path} )
     
     context = dict(
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         form= form,
         breadcrumbs = make_crumbs(path),
-        result_msg = result_msg,
+        msg = msgs,
         file_meta = file_meta,
         repo_name = repo_name,
         branch_name = branch,
@@ -80,7 +82,7 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
 def upload(request, repo_name, branch=REPO_BRANCH ):
     file_source = path = ""
     msgs = []
-    json_convert = None
+    json_convert = None  
 
     if request.method == 'POST':
         from _os_helpers import ProgressBarUploadHandler
@@ -119,6 +121,7 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
         
         if request.is_ajax():
             json_convert = message_convert
+
     else:
         form = FileUploadForm( initial={"message":"%s added" % path} )
     

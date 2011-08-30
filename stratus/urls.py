@@ -5,10 +5,10 @@ urlpatterns = patterns('stratus.views.file',
 	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/edit/(?P<path>[a-zA-Z0-9\-_\.\/]+)$',
 		"edit", name='stratus-edit-file'),
 
-	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/new/(?P<path>[a-zA-Z0-9\-_\.\/]+)$', 
+	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/new/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
 		"new", name='stratus-new-file'),
 
-    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/upload/', 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/upload/$', 
         "upload", name='stratus-upload-file'),
 
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/delete/(?P<path>[a-zA-Z0-9\-_\.\/]+)$', 
