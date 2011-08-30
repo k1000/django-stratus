@@ -4,6 +4,7 @@ from django.http import  HttpResponse, Http404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from _view_helpers import mix_response, make_crumbs, error_view, message_convert
 from _git_helpers import get_repo, get_commit_tree, get_diff, mk_commit
@@ -20,9 +21,12 @@ MSG_NO_FILE = "File hasn't been found."
 MSG_NO_FILE_IN_TREE = "File haven't been found under current tree."
 MSG_CANT_VIEW = "Can't view file."
 MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
-MSG_RENAME_ERROR = "There been an error during renaming the file %s to %s."
-MSG_RENAME_SUCCESS = "File %s has been renamed to %s"
-MSG_DELETE = "File '%s' has been deleted"
+MSG_RENAME_ERROR = u"There been an error during renaming the file %s to %s."
+MSG_RENAME_SUCCESS = u"File %s has been renamed to %s"
+MSG_DELETE = u"File '%s' has been deleted"
+MSG_CANT_SAVE_FILE = "Error. File hasn't been saved"
+MSG_UPLOAD_SUCCESS = u"File '%s' has been uploaded"
+MSG_COMMIT_SUCCESS = u"File '%s' has been commited"
 
 @login_required
 def new(request, repo_name, branch=REPO_BRANCH, path=None ):
@@ -71,30 +75,53 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
         'stratus/new_file.html', 
         context)
 
+
+
+@csrf_exempt  #TODO 
 @login_required
 def upload(request, repo_name, branch=REPO_BRANCH ):
     file_source = path = ""
     msgs = []
+    json_convert = None  
+
     if request.method == 'POST':
-        form = FileUploadForm( request.POST, request.FILES )
-        if form.is_valid():
-            dir_path = form.cleaned_data["dir_path"] #!!! FIX security
-            #TODO check if file exist already
-            repo = get_repo( repo_name )
+        from _os_helpers import ProgressBarUploadHandler
+        request.upload_handlers.insert(0, ProgressBarUploadHandler())
 
-            file_source = form.cleaned_data["file_source"]
-            path = os.path.join( dir_path, file_source.name )
-            file_writen = write_file(path, file_source )
+        repo = get_repo( repo_name )
+        dir_path = request.GET.get("upload_dir") #!!! FIX security
+        file_name = request.GET.get("qqfile")
+        file_path = os.path.join(dir_path, unicode(filename, 'utf-8').encode('utf-8') )
+        file_abs_path = os.path.join( repo.working_dir, file_path)
 
-            if file_writen:
-                msgs.append( "file has been created" )
-                result_msg = mk_commit(repo, msg, path )
-                msgs.append( result_msg )
-            else:
-                msgs.append( "Error. file has been created" )
-
+        print file_abs_path
+        if request.META['CONTENT_TYPE'] == 'application/octet-stream':
+            try:
+                destination = open(file_abs_path, 'wb+')
+                for chunk in request.raw_post_data:
+                    destination.write(chunk)
+                destination.close()
+            except:
+                file_writen = False
+            finally:
+                file_writen = True
         else:
-            msgs.append( form.errors )
+            file_writen = handle_uploaded_file(file_abs_path, request.FILES['file_source'])
+
+        if file_writen:
+             
+            msgs.append( MSG_UPLOAD_SUCCESS % file_path)
+            message = MSG_COMMIT_SUCCESS % file_path
+            msg = mk_commit(repo, message, file_name )
+            msgs.append( msg )
+            return HttpResponse('{ "success": true }', mimetype='application/javascript')
+        else:
+            msgs.append( MSG_CANT_SAVE_FILE )
+            return HttpResponse('{ "success": false }', mimetype='application/javascript')
+        
+        if request.is_ajax():
+            json_convert = message_convert
+
     else:
         form = FileUploadForm( initial={"message":"%s added" % path} )
     
@@ -102,15 +129,16 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         form= form,
         breadcrumbs = make_crumbs(path),
-        result_msg = result_msg,
+        msg = msgs,
         repo_name = repo_name,
         branch_name = branch,
         path = path,
     )
     return mix_response( 
         request, 
-        'stratus/new_file.html', 
-        context)
+        'stratus/upload_file.html', 
+        context,
+        json_convert,)
 
 
 @login_required
@@ -162,12 +190,12 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
     if request.method == 'POST':
         form = form_class( request.POST, request.FILES )
         if form.is_valid():
-
+            file_abs_path = os.path.join( repo.working_dir, file_path)
             if file_meta["mime_type"] == "text" or mime[1] in ["xml",]:
                 file_source = form.cleaned_data["file_source"]
-                file_writen = write_file(file_path, file_source )
+                file_writen = write_file(file_abs_path, file_source )
             else:
-                file_writen = handle_uploaded_file(file_path, request.FILES['file_source'])
+                file_writen = handle_uploaded_file(file_abs_path, request.FILES['file_source'])
             
             if file_writen:
                 msgs.append( "File has been saved" )
@@ -175,7 +203,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
                 msg = mk_commit(repo, message, file_path )
                 msgs.append( msg )
             else:
-                msgs.append( "Error. File have not been written" )
+                msgs.append( MSG_CANT_SAVE_FILE )
         else:
             msgs.append( form.errors )
 

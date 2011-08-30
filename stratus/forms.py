@@ -20,13 +20,13 @@ class FileDeleteForm(forms.Form):
 
 class FileUploadForm(forms.Form):
 	"""docstring for FileEditForm"""
-	dir_path = forms.CharField( widget=forms.HiddenInput, required=False )
-	file_source = forms.FileField( )
+	upload_dir = forms.CharField( widget=forms.HiddenInput, required=False )
+	file_upload = forms.FileField( )
 
 class RenameForm(forms.Form):
 	"""docstring for FileEditForm"""
 	new_name = forms.CharField()
 
 class SearchForm(forms.Form):
-	"""docstring for FileEditForm"""
+	"""docstring forss FileEdssitForm"""
 	query = forms.CharField()

@@ -1,5 +1,5 @@
 {% load commit_tags %}
-<div class="tree" id="tree_{{repo_name}}_{{branch_name}}" >
+
 
 	<ul class="breadcrumbs">
 		<li><a href="{% url stratus-tree-view repo_name branch_name "" %}" class="ajax" rel="index" >//</a> </li>
@@ -30,12 +30,4 @@
 		</li>
 		{% endfor %}
 	</ul>
-
-	<p class="new_file">NEW FILE</p>
-
-	<form enctype="multipart/form-data" action="{% url stratus-upload-file repo_name branch_name %}" method="post" class="ajax" rel="contents" >
-		{{ upload_form.as_p }}
-		{% csrf_token %}
-		<button>UPLOAD</button>
-	</form>
 </div>
