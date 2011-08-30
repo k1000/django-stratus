@@ -24,10 +24,10 @@ def to_json(python_object):
     return None
     #raise TypeError(repr(python_object) + ' is not JSON serializable')
 
-def message_convert( request, template_name, context, white_list =  ["msg", "success"] ):
+def message_convert( request, template_name, context ):
     context_out ={}
-    
-    for key,value in context.keys():
+    white_list =  ["msg", "success", "path"]
+    for key in context.keys():
         if key in white_list:
             context_out[key] = context[key]
 
@@ -48,8 +48,10 @@ def partial_json_convert( request, template_name, context ):
             template_name,
             context)
     
-    context_out = {"html": partial }
-        
+    context_out = dict(
+        html = partial,
+        path = context.get("path", ""),
+    )
     return context_out
 
     

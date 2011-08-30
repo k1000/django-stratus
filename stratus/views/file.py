@@ -23,10 +23,12 @@ MSG_CANT_VIEW = "Can't view file."
 MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
 MSG_RENAME_ERROR = u"There been an error during renaming the file %s to %s."
 MSG_RENAME_SUCCESS = u"File %s has been renamed to %s"
-MSG_DELETE = u"File '%s' has been deleted"
+MSG_DELETE_SUCCESS = u"'%s' has been deleted"
 MSG_CANT_SAVE_FILE = "Error. File hasn't been saved"
 MSG_UPLOAD_SUCCESS = u"File '%s' has been uploaded"
 MSG_COMMIT_SUCCESS = u"File '%s' has been commited"
+MSG_NO_FILE_REPO = u"File '%s' hasn't been found in the branch"
+
 
 @login_required
 def new(request, repo_name, branch=REPO_BRANCH, path=None ):
@@ -83,18 +85,18 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
     file_source = path = ""
     msgs = []
     json_convert = None  
+    success = False
 
     if request.method == 'POST':
-        from _os_helpers import ProgressBarUploadHandler
-        request.upload_handlers.insert(0, ProgressBarUploadHandler())
+        #from _os_helpers import ProgressBarUploadHandler
+        #request.upload_handlers.insert(0, ProgressBarUploadHandler())
 
         repo = get_repo( repo_name )
         dir_path = request.GET.get("upload_dir") #!!! FIX security
         file_name = request.GET.get("qqfile")
-        file_path = os.path.join(dir_path, unicode(filename, 'utf-8').encode('utf-8') )
+        file_path = os.path.join(dir_path, file_name ) #!!!FIX convert correctly unicode names 
         file_abs_path = os.path.join( repo.working_dir, file_path)
 
-        print file_abs_path
         if request.META['CONTENT_TYPE'] == 'application/octet-stream':
             try:
                 destination = open(file_abs_path, 'wb+')
@@ -103,21 +105,22 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
                 destination.close()
             except:
                 file_writen = False
-            finally:
+            else:
                 file_writen = True
         else:
             file_writen = handle_uploaded_file(file_abs_path, request.FILES['file_source'])
 
         if file_writen:
-             
             msgs.append( MSG_UPLOAD_SUCCESS % file_path)
             message = MSG_COMMIT_SUCCESS % file_path
-            msg = mk_commit(repo, message, file_name )
+            msg = mk_commit(repo, message, file_path )
             msgs.append( msg )
-            return HttpResponse('{ "success": true }', mimetype='application/javascript')
+            success = True
+            #return HttpResponse('{ "success": true }', mimetype='application/javascript')
         else:
             msgs.append( MSG_CANT_SAVE_FILE )
-            return HttpResponse('{ "success": false }', mimetype='application/javascript')
+            success = False
+            #return HttpResponse('{ "success": false }', mimetype='application/javascript')
         
         if request.is_ajax():
             json_convert = message_convert
@@ -127,12 +130,12 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
     
     context = dict(
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
-        form= form,
         breadcrumbs = make_crumbs(path),
         msg = msgs,
         repo_name = repo_name,
         branch_name = branch,
         path = path,
+        success = success,
     )
     return mix_response( 
         request, 
@@ -229,7 +232,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         msg = msgs,
         repo_name = repo_name,
         branch_name = branch,
-        delete_form = FileDeleteForm( initial={"message":MSG_DELETE % path }),
+        delete_form = FileDeleteForm( initial={"message":MSG_DELETE_SUCCESS % path }),
         path = path,
         name = path.split("/")[-1:][0],
     )
@@ -315,47 +318,64 @@ def view(request, repo_name, branch, path, commit_sha=None,):
         'stratus/view_file.html', 
         context)
 
+
 @login_required
 def delete(request, repo_name, branch, path ):
+    msgs = []
+    json_convert = None
+    success= False
+
     repo = get_repo( repo_name )
     tree = repo.tree()
     try:
         ftree = tree[path] #check if exixs under the tree
     except KeyError:
-        pass
-
-    if request.method == "POST":
-        form = FileDeleteForm(request.POST)
-        if form.is_valid():
-            if os.path.isfile(path):
-                os.remove(path)
-            git = repo.git
-            del_message = git.rm(path)
-
-            msg = form.cleaned_data["message"]
-            commit_result = git.commit("-m", """%s""" % msg)
-            messages.success(request, commit_result ) 
-
-            dir_path = "/".join( path.split("/")[:-1] )
-            return redirect('stratus-tree-view', repo_name, branch, dir_path  )
+        msgs.append( MSG_NO_FILE_REPO % path )
     else:
-        form = FileDeleteForm(initial={
-            "message": "file %s deleted" % path,
-            "path": path,
-        })
-    
+        if os.path.isfile(path):
+            try:
+                os.remove(path)
+            except:
+                removed = False
+            else:
+                removed = True
+        elif os.path.isdir(path):
+            import shutil
+            try:
+                shutil.rmtree(path)
+            except:
+                removed = False
+            else:
+                removed = True
+
+        if removed:
+            git = repo.git
+            del_message = git.rm("-r", path)
+            msgs.append( del_message )
+            msg = MSG_DELETE_SUCCESS % path
+            commit_result = git.commit("-m", u"""%s""" % msg)
+            msgs.append( commit_result )
+
+            if request.is_ajax():
+                json_convert = message_convert
+            else:
+                dir_path = "/".join( path.split("/")[:-1] )
+                return redirect('stratus-tree-view', repo_name, branch, dir_path  )
+
     context = dict(
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         breadcrumbs = make_crumbs(path),
-        form = form,
         repo_name = repo_name,
+        msg = msgs,
         branch_name = branch,
         path = path,
     )
     return mix_response( 
         request, 
         'stratus/delete_file.html', 
-        context)
+        context,
+        json_convert)
+
 
 @login_required
 def get_file(request, repo_name, branch, path, commit_sha="" ):
@@ -406,7 +426,7 @@ def rename(request, repo_name, branch, file_path):
                 
                 git.mv( path, new_name )
                 msg = MSG_RENAME_SUCCESS % (path, new_name)
-                commit_result = git.commit("-m", """%s""" % msg)
+                commit_result = git.commit("-m", u"""%s""" % msg)
                 messages.success(request, commit_result ) 
                 dir_path = "/".join( path.split("/")[:-1] )
                 return redirect('stratus-tree-view', repo_name, branch, dir_path  )

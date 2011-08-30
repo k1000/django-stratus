@@ -17,3 +17,7 @@ STRATUS_MEDIA_URL = getattr(settings,"STRATUS_MEDIA_URL", settings.STATIC_URL )
 LIMIT_EDITOR_HEIGHT = getattr(settings,"LIMIT_EDITOR_HEIGHT", "300" ) 
 EDITABLE_MIME_TYPES = getattr(settings,"EDITABLE_MIME_TYPES", ["text", "application"] )
 PARTIAL_PREFIX = getattr(settings,"PARTIAL_PREFIX", "_")
+
+#GIT Commands
+GIT_RESET = ["--hard", "HEAD^"]
+GIT_COMMIT = ["-am",]
