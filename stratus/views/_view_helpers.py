@@ -26,7 +26,7 @@ def to_json(python_object):
 
 def message_convert( request, template_name, context ):
     context_out ={}
-    white_list =  ["msg", "success", "path"]
+    white_list =  ["msg", "success", "path", "reload_fbrowser"]
     for key in context.keys():
         if key in white_list:
             context_out[key] = context[key]

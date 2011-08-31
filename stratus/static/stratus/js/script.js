@@ -247,6 +247,7 @@ function get_page(url, rel, callback){
 		rel.html( data.html  )
 		if ( callback) callback(url, rel, data);
 		if ( data.msg ) show_messages( data.msg );
+		if ( data.reload_fbrowser ) file_browser.refresh();
 	}, "json")
 }
 

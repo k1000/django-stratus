@@ -362,7 +362,7 @@ def delete(request, repo_name, branch, path ):
             msg = MSG_DELETE_SUCCESS % path
             commit_result = git.commit("-m", u"""%s""" % msg)
             msgs.append( commit_result )
-
+            success = True
             if request.is_ajax():
                 json_convert = message_convert
             else:
@@ -377,6 +377,7 @@ def delete(request, repo_name, branch, path ):
         repo_name = repo_name,
         msg = msgs,
         branch_name = branch,
+        reload_fbrowser = success,
         path = path,
     )
     return mix_response( 

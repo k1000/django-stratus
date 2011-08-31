@@ -47,9 +47,7 @@
 	{% endif %}
 	</div>
 
-	<form action="{% url stratus-delete-file repo_name branch_name path %}" method="post">
-		{{ delete_form.as_p }}
-		<button class="delete">DELETE</button>
-	</form>
+	<p><a href="{% url stratus-delete-file repo_name branch_name path %}" class=​"ajax" >​DELETE</a></p>
+
 </div>
 

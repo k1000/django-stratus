@@ -473,3 +473,16 @@ button.delete {
 	height: 2em;
 	line-height: 1;
 }
+
+/* ---------- PREVIEW -------------- */
+
+.prev iframe { 
+	width: 60em;
+	height: 60em;
+}
+.prev input {
+	width: 300px;
+}
+.prev button {
+	margin-bottom: 0;
+}
