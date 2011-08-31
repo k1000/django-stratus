@@ -70,13 +70,8 @@
 		<form enctype="multipart/form-data" action="{% url stratus-upload-file repo_name branch_name %}" method="post" >
 			<input type="hidden" value="" name="upload_dir" id="id_upload_dir" />
 			{% csrf_token %}
-			<div class="qq-uploader">
-				<div class="qq-upload-drop-area" style="display: none; ">
-					<span>Drop files here to upload</span>
-				</div>
-				<div id="id_file_upload">      
-				    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>         
-				</div>
+			<div id="id_file_upload">      
+			    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>         
 			</div>
 		</form>
 		<div id="new_file">
