@@ -245,6 +245,7 @@ function get_page(url, rel, callback){
 	$.get(url, function(data) {
 		rel.html( data.html  )
 		if ( callback) callback(url, rel, data);
+		if ( data.msg ) show_messages( data.msg );
 	}, "json")
 }
 
