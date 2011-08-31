@@ -24,6 +24,7 @@ MSG_NOT_ALLOWED = "You are not allowed to view/edit this file."
 MSG_RENAME_ERROR = u"There been an error during renaming the file %s to %s."
 MSG_RENAME_SUCCESS = u"File %s has been renamed to %s"
 MSG_DELETE_SUCCESS = u"'%s' has been deleted"
+MSG_DELETE_ERROR = u"'%s' hasn't been deleted"
 MSG_CANT_SAVE_FILE = "Error. File hasn't been saved"
 MSG_UPLOAD_SUCCESS = u"File '%s' has been uploaded"
 MSG_COMMIT_SUCCESS = u"File '%s' has been commited"
@@ -326,25 +327,29 @@ def delete(request, repo_name, branch, path ):
     msgs = []
     json_convert = None
     success= False
+    removed = False
 
     repo = get_repo( repo_name )
     tree = repo.tree()
+
     try:
         ftree = tree[path] #check if exixs under the tree
     except KeyError:
         msgs.append( MSG_NO_FILE_REPO % path )
     else:
-        if os.path.isfile(path):
+
+        file_abs_path = os.path.join(repo.working_dir, path)
+        if os.path.isfile(file_abs_path):
             try:
-                os.remove(path)
+                os.remove(file_abs_path)
             except:
                 removed = False
             else:
                 removed = True
-        elif os.path.isdir(path):
+        elif os.path.isdir(file_abs_path):
             import shutil
             try:
-                shutil.rmtree(path)
+                shutil.rmtree(file_abs_path)
             except:
                 removed = False
             else:
@@ -352,7 +357,7 @@ def delete(request, repo_name, branch, path ):
 
         if removed:
             git = repo.git
-            del_message = git.rm("-r", path)
+            del_message = git.rm("-r", file_abs_path)
             msgs.append( del_message )
             msg = MSG_DELETE_SUCCESS % path
             commit_result = git.commit("-m", u"""%s""" % msg)
@@ -363,6 +368,8 @@ def delete(request, repo_name, branch, path ):
             else:
                 dir_path = "/".join( path.split("/")[:-1] )
                 return redirect('stratus-tree-view', repo_name, branch, dir_path  )
+        else:
+            msgs.append( MSG_DELETE_ERROR % path )
 
     context = dict(
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
