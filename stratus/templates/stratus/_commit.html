@@ -7,13 +7,13 @@
         {% for file, values in commit.stats.files.items %}
         <li>
             {# % url commitlog-view-file repo_name branch_name commit.hexsha file % #}
+            {% if file == path %}
+            <strong>{{ file }}</strong>
+            {% else %}
             <a class="ajax" rel="contents" href="{% url stratus-view-file repo_name branch_name commit.hexsha file %}" title="{{ file }} at {{ commit.hexsha|truncatechars:6 }} commit" >
-                {% if file == path %}
-                <strong>{{ file }}</strong>
-                {% else %}
                 {{ file }}
-                {% endif %}
             </a>
+            {% endif %}
             {% if values.insertions %}
                 <em class="insert">+{{values.insertions}}</em>
             {% endif %}
