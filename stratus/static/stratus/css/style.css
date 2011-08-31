@@ -467,4 +467,7 @@ button.delete {
 #new_file button{
 	float: right;
 	margin-bottom: 0;
+	width: 2em;
+	height: 2em;
+	line-height: 1;
 }
