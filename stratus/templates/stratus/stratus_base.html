@@ -69,35 +69,29 @@
 		{% endfor %}
 		</ul>
 	</div>
+	
 {% if branch_name %}
-
 	<p><a href="#" id="toogle_files" class="toggle" rel="#browser">Files:</a></p>
 	<div id="browser">
 		<div id="file_browser" >
 {% block git_tree %}{% endblock git_tree %}
-		</div>
+		</div><!-- /.file_browser -->
+
 		<p class="new_file">NEW FILE</p>
-		<form enctype="multipart/form-data" action="{% url stratus-upload-file repo_name branch_name %}" method="post" >
-			<input type="hidden" value="" name="upload_dir" id="id_upload_dir" />
-			{% csrf_token %}
-			<div id="id_file_upload">      
-			    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>         
-			</div>
-		</form>
+
+		<div id="id_file_upload">      
+		    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>
+		</div><!-- /id_file_upload -->
+
 		<div id="new_file">
-			<input type="text" id="new_file_name">
+			<input type="text" id="new_file_name" />
 			<button id="create_new_file">+</button>
 		</div>
-
-	</div>
+	</div><!-- /.browser -->
 {% endif %}
-	<div id="toolbox">
-	</div>
 
-	
-	
 	<div id="main">
-		<ul class="tabs"></ul>
+		<ul class="tabs"></ul><!-- /.tabs -->
 		<div id="pages">
 			<div class="page">
 {% block git_content %}{% endblock git_content %}

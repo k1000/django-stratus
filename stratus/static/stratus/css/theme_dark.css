@@ -1,9 +1,14 @@
-/* @override http://127.0.0.1:8000/media/commitlog/theme_dark.css */
+/* @override 
+	http://127.0.0.1:8000/media/commitlog/theme_dark.css
+	http://127.0.0.1:8000/static/stratus/css/theme_dark.css
+*/
 
 .CodeMirror {
-	height: auto;
 	color: #fcd6d3;
 	font: 1em/1.3em "Andale Mono", "Courier New", Courier, mono;
+	border: 1px solid #eee;
+    color: white;
+    height: auto;
 }
 .CodeMirror-cursor{
 	border-left: 1px solid white !important;
@@ -35,14 +40,10 @@
 #activeline {
 	background: red;
 }
-.CodeMirror {
-    border: 1px solid #eee;
-    color: white;
-}
 .CodeMirror-scroll {
 	background: #201724;
-	
-	overflow-y: hidden; 
+	height: auto;
+	overflow-y: auto; 
 	overflow-x: auto;
 }
 pre.CodeMirror-cursor !important{
