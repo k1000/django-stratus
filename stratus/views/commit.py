@@ -2,10 +2,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 
-from _view_helpers import mix_response
+from _view_helpers import mix_response, message_convert
 from _git_helpers import get_repo, get_commits, get_commit, get_diff
 
-from stratus.settings import REPO_BRANCH, REPO_RESTRICT_VIEW, REPO_ITEMS_IN_PAGE, STRATUS_MEDIA_URL
+from stratus.settings import REPO_BRANCH, REPO_RESTRICT_VIEW, REPO_ITEMS_IN_PAGE, STRATUS_MEDIA_URL, GIT_RESET
 
 def log(request, repo_name, branch=REPO_BRANCH, path=None):
     page = int(request.GET.get("page", 0))
@@ -66,18 +66,32 @@ def undo(request, repo_name, branch_name):
     """
     undo last commit
     """
+    msgs = []
+    json_convert = None
+
     repo = get_repo( repo_name )
     git = repo.git
-    reset_result = git.reset( "--soft", "HEAD^" )
-    messages.success(request, reset_result ) 
-    context = dict(msg=reset_result, )
+    reset_result = git.reset( *GIT_RESET )
+    msgs.append( reset_result )
+
+    if request.is_ajax():
+        json_convert = message_convert
+
+    context = dict(
+        STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
+        repo_name = repo_name,
+        branch_name = branch_name,
+        msg=msgs, 
+    )
     return mix_response( 
         request, 
         'stratus/undo.html', 
-        context)
+        context,
+        json_convert,
+        )
 
 @login_required
-def diff(request, repo_name, branch, path, commits=[]):
+def diff(request, repo_name, branch, path):
     """
     view file diffs betwin given commits
     """

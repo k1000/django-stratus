@@ -17,32 +17,13 @@ $(document).ready( function(){
 	var pagae1 = $(".page").html();
 	$(".page").remove();
 	var editors = new EditorManager();
-	var file_browser = new FileBrowserManager( tree_path );
+	var filebrowser = new FileBrowserManager( tree_path );
     
     var loc = window.location.pathname;
 
 	pages.new_page( loc, pagae1 );
-	// give current page id
-	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
 	tabs.mk_tab( loc , $(".page h1").html() );
 	//$.history.init(loadContent);
-
-	// http://valums.com/ajax-upload/
-	var uploader = new qq.FileUploader({
-	    // pass the dom node (ex. $(selector)[0] for jQuery users)
-	    element: document.getElementById('id_file_upload'),
-	    // get other data
-	    params: { 
-		    upload_dir: document.getElementById('id_upload_dir').value
-	    	//csrftoken: $("input[name=csrfmiddlewaretoken]").val() 
-	   	},
-	    // path to server-side upload script
-	    action: UPLOAD_URL,
-	    onComplete: function(id, fileName, data){
-	    	dispatch_form_respond(UPLOAD_URL, "#message", data);
-	    }
-	}); 
-
 
 	// ----------------- FILE BROWSER --------------------
 	$("#toogle_files").click( function(event){
@@ -54,7 +35,7 @@ $(document).ready( function(){
 	// ----------------- NEW FILE --------------------
 	$("#create_new_file").click( function(){
 		var url = NEW_FILE_URL
-			//+ file_browser.current_path + "/"
+			//+ browser.current_path + "/"
 			+ document.getElementById("new_file_name").value;
 		pages.hide_current();
 		tabs.mk_tab(url, "new file "+ url );
@@ -114,7 +95,7 @@ $(document).ready( function(){
 			get_page(url, current);
 		//load in arbitrary container
 		} else if (rel == "index" ) {
-			file_browser.open( url );
+			filebrowser.open( url );
 		} else {
 			get_page(url, $(rel));
 		}
@@ -255,22 +236,52 @@ function get_page(url, rel, callback){
 	$.get(url, function(data) {
 		rel.html( data.html  )
 		if ( callback) callback(url, rel, data);
+		if ( data.msg ) show_messages( data.msg );
 	}, "json")
 }
 
 function FileBrowserManager( path ){
 	this.container = $("#file_browser");
 	this.current_path = path;
+	this.current_dir = "";
+	// http://valums.com/ajax-upload/
 
 	get_page(path, this.container);
+
+	this.set_uploader = function( dir ){
+		var dir = dir;
+		var self = this;
+		var uploader = new qq.FileUploader({
+		    // pass the dom node (ex. $(selector)[0] for jQuery users)
+		    element: document.getElementById('id_file_upload'),
+		    // get other data
+		    params: { 
+			    upload_dir: dir
+		   	},
+		    // path to server-side upload script
+		    action: UPLOAD_URL,
+		    onComplete: function(id, fileName, data){
+		    	show_messages( data.msg );
+		    	self.refresh();
+		    }
+		}); 
+	}
+	this.set_uploader( this.current_dir )
 
 	this.refresh = function(){
 		this.open( this.current_path );
 	}
 
 	this.open = function( url ){
+		var self = this;
 		this.current_path = url;
-		get_page(url, this.container);
+		get_page(url, this.container, function(url, rel, data){
+			var dir = data.path
+			if ( dir != self.current_dir ){
+				self.current_dir = dir;
+				self.set_uploader( dir );
+			}
+		});
 	}
 }
 

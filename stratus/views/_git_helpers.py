@@ -1,7 +1,7 @@
 from git import *
 from django.http import Http404
 from stratus.views._view_helpers import error_view
-from stratus.settings import REPOS, REPO_ITEMS_IN_PAGE
+from stratus.settings import REPOS, REPO_ITEMS_IN_PAGE, GIT_COMMIT
 
 MSG_COMMIT_ERROR = "There were problems with making commit"
 MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
@@ -11,10 +11,14 @@ def mk_commit(repo, message, path ):
     git = repo.git
     try:
         git.add(path)
-        result_msg = git.commit("-am", u"""%s""" % message)
+        result_msg = git.commit(GIT_COMMIT + [u"""%s""" % message])
         #commit_result = index.commit("""%s""" % message)
     except GitCommandError, e:
-        result_msg = MSG_COMMIT_ERROR
+        #import ipdb; ipdb.set_trace()
+        if e.stderr:
+            result_msg = e.stderr
+        else:
+            result_msg = MSG_COMMIT_ERROR
 
     return result_msg
 

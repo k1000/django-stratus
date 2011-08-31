@@ -25,7 +25,7 @@
 
 			{% endif %}
 			{# <small>commit: <a href="{% url stratus-commit-view repo_name branch_name element.hexsha %}">{{ element.hexsha|truncatechars:16 }}</a></small> #}
-			<a href="{% url stratus-delete-file repo_name branch_name element.path %}" class="delete ajax" rel="#toolbox" title="delete">x</a>
+			<a href="{% url stratus-delete-file repo_name branch_name element.path %}" class="delete ajax" rel="#messages" title="delete">x</a>
 			<a href="{% url stratus-rename-file repo_name branch_name element.path %}" class="rename ajax" rel="appendix" >rename</a>
 		</li>
 		{% endfor %}
