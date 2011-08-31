@@ -90,11 +90,13 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
 
         repo = get_repo( repo_name )
         dir_path = request.GET.get("upload_dir") #!!! FIX security
-        file_name = request.GET.get("qqfile")
-        file_path = os.path.join(dir_path, unicode(filename, 'utf-8').encode('utf-8') )
+        import ipdb; ipdb.set_trace()
+        file_name = unicode( request.GET.get("qqfile"), 'utf-8').encode('utf-8')
+
+        file_path = os.path.join(dir_path, file_name )
+        
         file_abs_path = os.path.join( repo.working_dir, file_path)
 
-        print file_abs_path
         if request.META['CONTENT_TYPE'] == 'application/octet-stream':
             try:
                 destination = open(file_abs_path, 'wb+')
