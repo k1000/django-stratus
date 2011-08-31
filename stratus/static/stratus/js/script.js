@@ -118,9 +118,10 @@ $(document).ready( function(){
 		} else if (rel == "current" || rel == "prev" || rel == "next") {
 			var current = $(self).parents(".page");
 			get_page(url, current);
-		//load in arbitrary container
+		//syncronize file browser
 		} else if (rel == "index" ) {
 			file_browser.open( url );
+		//load in arbitrary container
 		} else {
 			get_page(url, $(rel));
 		}
