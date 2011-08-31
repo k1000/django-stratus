@@ -430,7 +430,7 @@ button.delete {
     margin: 10px;
     text-align: center;
 }
-.qq-upload-button-hover {background: #ebfaf8;}
+/*.qq-upload-button-hover {background: #ebfaf8;} */
 .qq-upload-button-focus {outline:1px dotted black;}
 
 .qq-upload-drop-area {
