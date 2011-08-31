@@ -30,8 +30,9 @@ $(document).ready( function(){
 	// ----------------- FILE BROWSER --------------------
 	$("#toogle_files").click( function(event){
 		event.preventDefault();
-		$(this).removeClass("open").addClass("closed");
-		$('#working_tree').toggle("fast");
+		var self = $(this);
+		self.removeClass("open").addClass("closed");
+		self.parent().next().toggle("fast");
 	})
 
 	// ----------------- NEW FILE --------------------
@@ -116,7 +117,7 @@ $(document).ready( function(){
 		$('#console_output').load(CONSOLE_URL, data, function() {});
 	})
 
-	$("#console h4").click( function(){
+	$("#console > p").click( function(){
 		$("#console .content").toggle()
 	})
 
