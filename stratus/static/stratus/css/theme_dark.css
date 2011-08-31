@@ -1,7 +1,7 @@
 /* @override http://127.0.0.1:8000/media/commitlog/theme_dark.css */
 
-div.CodeMirror {
-	background: #201724;
+.CodeMirror {
+	height: auto;
 	color: #fcd6d3;
 	font: 1em/1.3em "Andale Mono", "Courier New", Courier, mono;
 }
@@ -40,8 +40,9 @@ div.CodeMirror {
     color: white;
 }
 .CodeMirror-scroll {
-	height: auto;
-	overflow-y: hidden;
+	background: #201724;
+	
+	overflow-y: hidden; 
 	overflow-x: auto;
 }
 pre.CodeMirror-cursor !important{

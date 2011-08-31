@@ -163,6 +163,7 @@ ul {
 .undo {
 	float: right;
 }
+/* ---------- LISTS -------------- */
 .list {
 	padding: 0;
 	margin: 0;
@@ -246,10 +247,10 @@ a.delete:hover{
 	color: red;
 }
 li.blob{
-	background: url(/media/commitlog/images/file.png) no-repeat 10px;
+	background: url(/static/stratus/images/file.png) no-repeat 10px;
 }
 li.tree{
-	background: url(/media/commitlog/images/directory.png) no-repeat 10px;
+	background: url(/static/stratus/images/directory.png) no-repeat 10px;
 }
 #file_browser .rename {
 	display: none;
@@ -294,7 +295,8 @@ p.new_file{
 }
 /* ---------- CODEMIRROR -------------- */
 .CodeMirror {
-	width: 54em;
+	width:54em;
+	padding: 0;
 }
 
 /* ---------- TABS -------------- */
