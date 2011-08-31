@@ -27,23 +27,6 @@ $(document).ready( function(){
 	tabs.mk_tab( loc , $(".page h1").html() );
 	//$.history.init(loadContent);
 
-	// http://valums.com/ajax-upload/
-	var uploader = new qq.FileUploader({
-	    // pass the dom node (ex. $(selector)[0] for jQuery users)
-	    element: document.getElementById('id_file_upload'),
-	    // get other data
-	    params: { 
-		    upload_dir: document.getElementById('id_upload_dir').value
-	    	//csrftoken: $("input[name=csrfmiddlewaretoken]").val() 
-	   	},
-	    // path to server-side upload script
-	    action: UPLOAD_URL,
-	    onComplete: function(id, fileName, data){
-	    	dispatch_form_respond(UPLOAD_URL, "#message", data);
-	    }
-	}); 
-
-
 	// ----------------- FILE BROWSER --------------------
 	$("#toogle_files").click( function(event){
 		event.preventDefault();
@@ -268,16 +251,45 @@ function get_page(url, rel, callback){
 function FileBrowserManager( path ){
 	this.container = $("#file_browser");
 	this.current_path = path;
+	this.current_dir = "";
+	// http://valums.com/ajax-upload/
 
 	get_page(path, this.container);
+
+	this.set_uploader = function( dir ){
+		var dir = dir;
+		var self = this;
+		var uploader = new qq.FileUploader({
+		    // pass the dom node (ex. $(selector)[0] for jQuery users)
+		    element: document.getElementById('id_file_upload'),
+		    // get other data
+		    params: { 
+			    upload_dir: dir
+		   	},
+		    // path to server-side upload script
+		    action: UPLOAD_URL,
+		    onComplete: function(id, fileName, data){
+		    	show_messages( data.msg );
+		    	self.refresh();
+		    }
+		}); 
+	}
+	this.set_uploader( this.current_dir )
 
 	this.refresh = function(){
 		this.open( this.current_path );
 	}
 
 	this.open = function( url ){
+		var self = this;
 		this.current_path = url;
-		get_page(url, this.container);
+		get_page(url, this.container, function(url, rel, data){
+			var dir = data.path
+			if ( dir != self.current_dir ){
+				self.current_dir = dir;
+				self.set_uploader( dir );
+			}
+		});
 	}
 }
 
