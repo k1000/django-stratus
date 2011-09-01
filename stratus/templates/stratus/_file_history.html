@@ -1,0 +1,38 @@
+{% load commit_tags %}
+{% regroup commits by committed_date|mkdate|date:"d D"|safe as commits_per_day %}
+
+<h1>
+    Commits for "{{ path }}" at {{ branch_name }} branch 
+</h1>
+
+
+<p class="pager">
+    {% if previous_page > -1 %}
+        <a href="{% url stratus-history-file repo_name branch_name peth %}?page={{ previous_page }}" class="previous button ajax" rel="prev" >PREVIOUS</a>
+    {% endif %}
+    {% if commits|length == REPO_ITEMS_IN_PAGE %}
+    <a href="{% url stratus-history-file repo_name branch_name peth %}?page={{ next_page }}" class="next button ajax" rel="next" >NEXT</a>
+    {% endif %}
+</p>
+
+<div class="commits">
+    
+    {% for commits in commits_per_day %}
+        <h3>{{ commits.grouper }}</h3>
+        {% for commit in commits.list %}
+            {% include "stratus/__commit.html" %}
+        {% endfor %}
+    {% endfor %}
+
+    {% if commits %}
+    <p class="pager">
+        {% if previous_page > -1 %}
+            <a href="{% url stratus-history-file repo_name branch_name peth %}?page={{ previous_page }}" class="previous button ajax" rel="prev" >PREVIOUS</a>
+        {% endif %}
+        {% if commits|length == REPO_ITEMS_IN_PAGE %}
+        <a href="{% url stratus-history-file repo_name branch_name peth %}?page={{ next_page }}" class="next button ajax" rel="next" >NEXT</a>
+        {% endif %}
+    </p>
+    {% endif %}
+        
+</div>

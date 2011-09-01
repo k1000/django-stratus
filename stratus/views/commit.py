@@ -12,11 +12,14 @@ def log(request, repo_name, branch=REPO_BRANCH, path=None):
     repo = get_repo( repo_name )
     if path:
         paths = [path]
+        template = 'stratus/file_history.html'
     else:
         paths = []
+        template = 'stratus/commitlog.html'
     
     commits = get_commits(repo, branch, paths, page)
     context = dict(
+        REPO_ITEMS_IN_PAGE = REPO_ITEMS_IN_PAGE,
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         repo_name = repo_name,
         branch_name = branch,
@@ -30,7 +33,7 @@ def log(request, repo_name, branch=REPO_BRANCH, path=None):
 
     return mix_response( 
         request, 
-        'stratus/commitlog.html', 
+        template, 
         context)
 
 if REPO_RESTRICT_VIEW:
@@ -46,7 +49,8 @@ def view(request, repo_name, branch, commit_sha=None):
     commit_list = get_commit( repo, commit_sha)
     if commit_list:
         commit = commit_list[0]
-        diff = get_diff( repo, commit_list[1].hexsha, commit.hexsha,  )
+        if len(commit_list) > 0:
+            diff = get_diff( repo, commit_list[1].hexsha, commit.hexsha, )
 
     context = dict(
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
