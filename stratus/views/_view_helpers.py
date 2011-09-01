@@ -80,7 +80,7 @@ def error_view(request, msg, code=None):
 def make_crumbs( path ):
     breadcrumbs = []
     bread = path.split("/")
-    for crumb in range(0, len(bread)-1):
+    for crumb in range(0, len(bread)):
         breadcrumbs.append( (bread[crumb], "/".join(bread[:crumb+1]) ))
         
     #breadcrumbs.append( (bread[-1], "#") )
