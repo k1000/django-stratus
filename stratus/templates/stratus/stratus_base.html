@@ -77,15 +77,21 @@
 {% block git_tree %}{% endblock git_tree %}
 		</div><!-- /.file_browser -->
 
-		<p class="new_file">NEW FILE</p>
+		<a href="#" class="toggle">+</a>
+		<div id="file_tools" style="display: none">
+			<div id="id_file_upload">      
+			    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>
+			</div><!-- /id_file_upload -->
 
-		<div id="id_file_upload">      
-		    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>
-		</div><!-- /id_file_upload -->
+			<div id="new_file">
+				<input type="text" id="new_file_name" />
+				<button id="create_new_file">+</button>
+			</div>
 
-		<div id="new_file">
-			<input type="text" id="new_file_name" />
-			<button id="create_new_file">+</button>
+			<div id="new_folder">
+				<input type="text" id="new_folder_name" />
+				<button id="create_folder_file">+</button>
+			</div>
 		</div>
 	</div><!-- /.browser -->
 {% endif %}

@@ -27,12 +27,14 @@ $(document).ready( function(){
 	tabs.mk_tab( loc , $(".page h1").html() );
 	//$.history.init(loadContent);
 
-	// ----------------- FILE BROWSER --------------------
-	$("#toogle_files").click( function(event){
+	// ----------------- TOGGLE --------------------
+	$(".toggle").click( function(event){
 		event.preventDefault();
-		var self = $(this);
-		self.removeClass("open").addClass("closed");
-		self.parent().next().toggle("fast");
+		if ( this.rel ){
+			$(this.rel).toggle("fast");
+		} else {
+			$(this).next().toggle("fast");
+		}
 	})
 
 	// ----------------- NEW FILE --------------------
