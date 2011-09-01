@@ -224,14 +224,17 @@ function get_prev_next( obj, current ) {
 	// gets previous and next on both sides of current
 	var prev_next = {"prev":null, "next":null};
 	var var_prev = null;
+	var current_found = false;
+
 	for (var key in obj){
 		if (hasOwnProperty.call(obj, key)){
-			if ( prev_next.prev ) {
+			if ( prev_next.prev || current_found) {
 				prev_next.next =  key;
 				return prev_next
 			}
 			if ( key == current ) {
 				prev_next.prev = var_prev;
+				current_found = true;
 			}
 			var_prev = key;
 		}
@@ -277,7 +280,7 @@ function FileBrowserManager( path ){
 		    }
 		}); 
 	}
-	
+
 	this.set_uploader( this.current_dir )
 
 	this.refresh = function(){
