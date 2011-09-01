@@ -38,15 +38,27 @@ $(document).ready( function(){
 	})
 
 	// ----------------- NEW FILE --------------------
-	$("#create_new_file").click( function(){
+	$("#create_new_file").click( function(e){
+		e.preventDefault()
+		var dir = (file_browser.current_dir)? file_browser.current_dir + "/" : "";
 		var url = NEW_FILE_URL
-			//+ file_browser.current_path + "/"
+			+ dir
 			+ document.getElementById("new_file_name").value;
 		pages.hide_current();
 		tabs.mk_tab(url, "new file "+ url );
 		pages.open_page( url, function(url, data){ 
 			editors.mk( url );
 		});
+	})
+
+	// ----------------- NEW FOLDER --------------------
+	$("#create_new_folder").click( function(e){
+		e.preventDefault();
+		var dir = (file_browser.current_dir)? file_browser.current_dir + "/" : "";
+		var url = NEW_FOLDER_URL
+			+ dir
+			+ document.getElementById("new_folder_name").value;
+		get_page(url, "#messages");
 	})
 
 	// ----------------- OPEN URL --------------------

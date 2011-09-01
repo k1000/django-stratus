@@ -90,7 +90,7 @@
 
 			<div id="new_folder">
 				<input type="text" id="new_folder_name" />
-				<button id="create_folder_file">+</button>
+				<button id="create_new_folder">+</button>
 			</div>
 		</div>
 	</div><!-- /.browser -->
@@ -121,6 +121,7 @@ var CONSOLE_URL = "{% url stratus-consol repo_name %}";
 {% if repo_name and branch_name %}
 var UPLOAD_URL = "{% url stratus-upload-file repo_name branch_name %}";
 var NEW_FILE_URL = "{% url stratus-new-file repo_name branch_name '' %}";
+var NEW_FOLDER_URL = "{% url stratus-new-folder repo_name branch_name '' %}";
 {% endif %}
 
 // ----------------- TREE INIT --------------------

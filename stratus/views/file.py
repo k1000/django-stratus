@@ -31,6 +31,11 @@ MSG_UPLOAD_SUCCESS = u"File '%s' has been uploaded"
 MSG_COMMIT_SUCCESS = u"File '%s' has been commited"
 MSG_NO_FILE_REPO = u"File '%s' hasn't been found in the branch"
 MSG_FILE_NAME_CHANGED = u"File '%s' has been renamed to '%s'"
+MSG_FOLDER_CREATE_ERROR = u"Error. Folder '%s' havn't been created"
+MSG_FOLDER_NAME_CHANGED = u"Folder '%s' has been renamed to '%s'"
+MSG_FOLDER_CREATED_SUCCESS = u"Folder '%s' has been created"
+MSG_FOLDER_EXIST_ERROR = u"Error. Folder '%s' exist already."
+
 
 @login_required
 def new(request, repo_name, branch=REPO_BRANCH, path=None ):
@@ -326,6 +331,47 @@ def view(request, repo_name, branch, path, commit_sha=None,):
         'stratus/view_file.html', 
         context)
 
+@login_required
+def new_folder(request, repo_name, branch, path ):
+    msgs = []
+    json_convert = None
+    success = False
+
+    repo = get_repo( repo_name )
+
+    folder_name = path #FIX security
+
+    dir_abs_path = os.path.join(repo.working_dir, folder_name)
+
+    if not os.path.exists(dir_abs_path):
+        try:
+            os.makedirs(dir_abs_path)
+        except IOError:
+            msgs.append( MSG_FOLDER_CREATE_ERROR % folder_name)
+        else:
+            msgs.append( MSG_FOLDER_CREATED_SUCCESS % folder_name)
+            success = True
+    else:
+        msgs.append( MSG_FOLDER_EXIST_ERROR % folder_name)
+
+    context = dict(
+        STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
+        breadcrumbs = make_crumbs(path),
+        repo_name = repo_name,
+        msg = msgs,
+        branch_name = branch,
+        reload_fbrowser = success,
+        path = path,
+    )
+
+    if request.is_ajax():
+        json_convert = message_convert
+
+    return mix_response( 
+        request, 
+        'stratus/new_folder.html', 
+        context,
+        json_convert)
 
 @login_required
 def delete(request, repo_name, branch, path ):
