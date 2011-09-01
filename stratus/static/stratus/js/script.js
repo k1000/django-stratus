@@ -150,8 +150,10 @@ $(document).ready( function(){
 		$("#console .content").toggle()
 	})
 
-	$("#console").draggable(function() {
-		helper: "original" 
+	$("#console").draggable( {
+		containment : $('#console'),
+  		handle      : $('#console > p')
+		//helper: "original" 
 	});
 
 	// ----------------- MESSAGES --------------------
@@ -188,12 +190,22 @@ $(document).ready( function(){
 		var form = self.parents("form");
 		var url = form.attr("action");
 		var rel = form.attr("rel");
-		
 		var to_upload = form.find("input[type=file]");
-		// if there is file to upload
-		if ( to_upload ) {
 
-			/*if (to_upload[0].files.length) {
+		$.ajax({
+				type: form.attr("method"),
+				url: url,
+				data: form.serialize(),
+				dataType: "json",
+				success: function(data){
+					dispatch_form_respond(url, rel, data)
+				}
+		});
+
+		// if there is file to upload
+		/*if ( to_upload ) {
+
+			if (to_upload[0].files.length) {
 				// https://github.com/valums/file-uploader
 				var uploader = new qq.FileUploader({
 				    // pass the dom node (ex. $(selector)[0] for jQuery users)
@@ -208,19 +220,25 @@ $(document).ready( function(){
 				}); 
 			} else {
 				show_messages( ["You must select file to upload"] );
-			}*/
+			}
 		} else {
-			$.ajax({
-				type: form.attr("method"),
-				url: url,
-				data: form.serialize(),
-				dataType: "json",
-				success: function(data){
-					dispatch_form_respond(url, rel, data)
-				}
-			});
-		}
+			
+		}*/
 	})
+
+	function dispatch_form_respond(url, rel, data){
+		if ( data.msg ) {
+			show_messages( data.msg );
+		}
+		if (  rel == "contents") {
+			pages.hide_current();
+			pages.new_page( url, data.html );
+			var tab_text = $(data.html).find("h1").text().replace('"', "");
+			tabs.mk_tab(url, tab_text);
+		} else {
+			$(rel).html( data.html );
+		}
+	}
 })
 
 function show_messages( msgs ){
@@ -231,19 +249,6 @@ function show_messages( msgs ){
 	$("#messages ul").html( msg_out ).parent().toggle(true);
 }
 
-function dispatch_form_respond(url, rel, data){
-	if ( data.msg ) {
-		show_messages( data.msg );
-	}
-	if (  rel == "contents") {
-		pages.hide_current();
-		pages.new_page( url, data.html );
-		var tab_text = $(data.html).find("h1").text().replace('"', "");
-		tabs.mk_tab(url, tab_text);
-	} else {
-		$(rel).html( data.html );
-	}
-}
 
 function get_prev_next( obj, current ) {
 	// gets previous and next on both sides of current
