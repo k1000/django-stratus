@@ -230,9 +230,16 @@ $(document).ready( function(){
 		if ( data.msg ) {
 			show_messages( data.msg );
 		}
-		if (  rel == "contents") {
+		if ( rel == "contents" ) {
 			pages.hide_current();
 			pages.new_page( url, data.html );
+			var tab_text = $(data.html).find("h1").text().replace('"', "");
+			tabs.mk_tab(url, tab_text);
+		} else if ( rel == "edit" ) {
+			pages.hide_current();
+			pages.open_page( url, function(url, data){ 
+				editors.mk( url );
+			});
 			var tab_text = $(data.html).find("h1").text().replace('"', "");
 			tabs.mk_tab(url, tab_text);
 		} else {
