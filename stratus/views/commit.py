@@ -49,7 +49,7 @@ def view(request, repo_name, branch, commit_sha=None):
     commit_list = get_commit( repo, commit_sha)
     if commit_list:
         commit = commit_list[0]
-        if len(commit_list) > 0:
+        if len(commit_list) > 1:
             diff = get_diff( repo, commit_list[1].hexsha, commit.hexsha, )
 
     context = dict(

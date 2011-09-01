@@ -33,13 +33,14 @@
 <div id="console">
 	<p class="button">Console</p>
 	<div class="content">
-		<div id="console_output"></div>
+		<pre id="console_output"></pre>
 		<p>
 			<label for="console-input">Command</label>
 			<input id="console-input" type="text" />
 			<button id="console_enter">ENTER</button>
 		</p>
 	</div>
+	{% csrf_token %}
 </div>
 
 {% endblock breadcrumbs %}
@@ -105,10 +106,6 @@
 		</div><!-- /.pages -->
 	</div><!-- /main -->
 </div> <!-- /.gitter -->
-
-
-
-
 
 {% if repo_name and branch_name %}
 <script type="text/javascript">

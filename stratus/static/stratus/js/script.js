@@ -17,16 +17,19 @@ $(document).ready( function(){
 	var pagae1 = $(".page").html();
 	$(".page").remove();
 	var editors = new EditorManager();
-	var file_browser = new FileBrowserManager( tree_path );
-    
+
     var loc = window.location.pathname;
 
 	pages.new_page( loc, pagae1 );
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
-	tabs.mk_tab( loc , $(".page h1").html() );
+	tabs.mk_tab( loc , $(".page h2").html() );
 	//$.history.init(loadContent);
 
+	if(tree_path){
+		var file_browser = new FileBrowserManager( tree_path );
+	}
+    
 	// ----------------- TOGGLE --------------------
 	$(".toggle").click( function(event){
 		event.preventDefault();
@@ -127,8 +130,20 @@ $(document).ready( function(){
 
 	// ----------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
-		var data = {"com":"git status"};
-		$('#console_output').load(CONSOLE_URL, data, function() {});
+		var cmd = $("#console-input").val()
+		var data = {
+			"com": cmd,
+			"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()
+		};
+		$('#console_output').append( "<p>"+ cmd +"</p>" );
+		$.post(
+			CONSOLE_URL,
+			data,
+			function(data) {
+				$('#console_output').append( "<pre>"+ data + "</pre>" );
+			},
+			"html"
+		)
 	})
 
 	$("#console > p").click( function(){
@@ -138,10 +153,6 @@ $(document).ready( function(){
 	$("#console").draggable(function() {
 		helper: "original" 
 	});
-
-	$("#console_enter").click( function(){
-		return false
-	})
 
 	// ----------------- MESSAGES --------------------
 	$("#messages a.close").click( function(){
