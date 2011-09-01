@@ -262,7 +262,7 @@ function FileBrowserManager( path ){
 	this.set_uploader = function( dir ){
 		var dir = dir;
 		var self = this;
-		var uploader = new qq.FileUploader({
+		this.uploader = new qq.FileUploader({
 		    // pass the dom node (ex. $(selector)[0] for jQuery users)
 		    element: document.getElementById('id_file_upload'),
 		    // get other data
@@ -277,6 +277,7 @@ function FileBrowserManager( path ){
 		    }
 		}); 
 	}
+	
 	this.set_uploader( this.current_dir )
 
 	this.refresh = function(){

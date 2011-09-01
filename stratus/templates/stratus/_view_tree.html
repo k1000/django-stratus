@@ -3,7 +3,7 @@
 	<ul class="breadcrumbs">
 		<li><a href="{% url stratus-tree-view repo_name branch_name "" %}" class="ajax" rel="index" >//</a> </li>
 		{% for crumb in breadcrumbs %}
-		<li><a href="{% url stratus-tree-view repo_name branch_name crumb.1 %}" class="ajax" rel="index" >{{crumb.0}}</a>/</li>
+		<li><a href="{% url stratus-tree-view repo_name branch_name crumb.1 %}" class="ajax" rel="index" >{{crumb.0}}/</a></li>
 		{% endfor %}
 	</ul>
 
