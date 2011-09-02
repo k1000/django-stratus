@@ -13,17 +13,31 @@
 			{% for branch in repo.branches %}
 			<li>
 				<!-- <a href="{% url stratus-tree-view repo_name branch.name "" %}">"{{ branch.name }}"</a> -->
-				<a href="{% url stratus-log repo_name branch.name %}">{{ branch.name }}</a>
+				<p>
+					<a href="{% url stratus-log repo_name branch.name %}">
+						{{ branch.name }} {% if repo.active_branch.name == branch.name %}*{% endif %}
+					</a>
+					<a name="delete_branch" href="#" class="delete cmd" title="delete branch" data-repo="{{repo_name}}">x</a>
+					<input type="hidden" name="param" value="{{ branch.name }}">
+					{% if repo.active_branch.name != branch.name %}
+					<a name="activate_branch" href="#" class="activate cmd" title="activate branch" data-repo="{{repo_name}}">activate</a>
+					{% endif %}
+				</p>
 				{% if repo.tags %}
 				<p>Tags.</p>
 				<ul class="tags">
 					{% for tag in repo.tags %}
 					<li><a href="{% url stratus-commit-tree-view repo_name branch.name tag "" %}">"{{ tag }}"</a></li>
 					{% endfor %}
-				</ul>					
+				</ul>
 				{% endif %}
 			{% endfor %}
 		</ul>
+
+		<p class="create_branch">
+			<input type="text" name="param">
+			<button name="create_branch" class="cmd" data-repo="{{repo_name}}" placeholder="name" >CREATE BRANCH</button>
+		</p>
 
 		<p>is dirty: {{ repo.is_dirty }} </p>
 		<p>status: </p>

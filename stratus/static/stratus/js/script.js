@@ -17,8 +17,8 @@ $(document).ready( function(){
 	var pagae1 = $(".page").html();
 	$(".page").remove();
 	var editors = new EditorManager();
-
-    var loc = window.location.pathname;
+	
+	var loc = window.location.pathname;
 
 	pages.new_page( loc, pagae1 );
 	// give current page id
@@ -26,11 +26,11 @@ $(document).ready( function(){
 	tabs.mk_tab( loc , $(".page h2").html() );
 	//$.history.init(loadContent);
 
-	if(tree_path){
+	if(window.tree_path){
 		var file_browser = new FileBrowserManager( tree_path );
 	}
     
-	// ----------------- TOGGLE --------------------
+	// ------------------- TOGGLE --------------------
 	$(".toggle").click( function(event){
 		event.preventDefault();
 		if ( this.rel ){
@@ -40,7 +40,7 @@ $(document).ready( function(){
 		}
 	})
 
-	// ----------------- NEW FILE --------------------
+	// ------------------    NEW FILE --------------------
 	$("#create_new_file").click( function(e){
 		e.preventDefault()
 		var dir = (file_browser.current_dir)? file_browser.current_dir + "/" : "";
@@ -128,11 +128,38 @@ $(document).ready( function(){
 		}
 	}
 
+	// ----------------- COMMANDS --------------------
+	var git_commands = {
+		create_branch: { str:"git checkout -b {{name}}", param:["name"] },
+		activate_branch: { str:"git checkout {{name}}", param:["name"] },
+		delete_branch: { str:"git branch rm {{name}}", param:["name"] }
+	}
+	$(document).delegate('.cmd', 'click', function(event) {
+		event.preventDefault()
+		var command = git_commands[this.name];
+		var param_len = command.param.length;
+		var cmd = command.str;
+		var repo = this.getAttribute("data-repo");
+		if (command.param){
+			var input_param = $(this).parent().find("input[name=param]").val().split(" ");
+			var input_param_len = input_param.length;
+			if ( param_len != input_param_len ) {
+				show_messages( this.name + " expects " + input_param_len + " parameter " + command.param.join(" ") )
+				return False
+			}
+			for (var i = command.param.length - 1; i >= 0; i--) {
+				var to_replece = "{{" + command.param[i] + "}}";
+				cmd = cmd.replace(to_replece, input_param[i]);
+			};
+		}
+		git_command( repo, cmd );
+	})
+
 	// ----------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
 		var cmd = $("#console-input").val();
 		$('#console_output').append( "<p>"+ cmd +"</p>" );
-		git_command( cmd, function( data ) {
+		git_command( REPO, cmd, function( data ) {
 			$('#console_output').append( "<pre>"+ data + "</pre>" );
 		})
 	})
@@ -147,17 +174,22 @@ $(document).ready( function(){
 		//helper: "original" 
 	});
 
-	function git_command( cmd, callback ){
+	function git_command( repo, cmd, callback ){
 		var callback = callback;
 		var send_data = {
 			"com": cmd,
 			"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()
 		};
+		var console_url = BASE_URL + repo + "/consol/";
 		$.post(
-			CONSOLE_URL,
+			console_url, 
 			send_data,
 			function(data) {
-				callback(data);
+				if (callback) {
+					callback(data);
+				} else {
+					show_messages([data]);
+				}
 			},
 			"html"
 		)
@@ -169,7 +201,7 @@ $(document).ready( function(){
 		return false
 	})
 
-	// ----------------- EDIT  --------------------
+	// -------------------- EDIT  --------------------
 	$(document).delegate('form.ajax_editor button', 'click', function(event) {
 		event.preventDefault();
 		var self = $(this);

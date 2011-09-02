@@ -1,7 +1,12 @@
 from django.conf.urls.defaults import *
 
+urlpatterns = patterns('stratus.views.meta', 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/consol/$', 
+        "consol", name='stratus-consol'),
+)
+
 # place app url patterns here
-urlpatterns = patterns('stratus.views.file',
+urlpatterns += patterns('stratus.views.file',
 	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/edit/(?P<path>[\w\(\)&\'\-\.\/ ]+)$',
 		"edit", name='stratus-edit-file'),
 
@@ -35,10 +40,6 @@ urlpatterns += patterns('stratus.views.tree',
         "view", name='stratus-commit-tree-view'),
 )
 
-urlpatterns += patterns('stratus.views.meta', 
-    url(r'^(?P<repo_name>[a-z0-9\-_]+)/consol/$', 
-        "consol", name='stratus-consol'),
-)
 
 urlpatterns += patterns('stratus.views.commit',
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/view/(?P<commit_sha>[a-zA-Z0-9\-_\.\/]*)$', 
