@@ -1,5 +1,6 @@
 import codecs
 from django.http import HttpResponse
+from django.utils.html import escape
 
 from stratus.settings import REPOS, REPO_BRANCH, STRATUS_MEDIA_URL
 from stratus.forms import SearchForm
@@ -115,6 +116,6 @@ def consol(request, repo_name):
                 result = "first command must be git"
             else:
                 command = getattr(git, com_str[1])
-                result = command( com_str[2:] )
+                result = escape( command( com_str[2:] ) )
                 
     return HttpResponse(result, mimetype='application/javascript')

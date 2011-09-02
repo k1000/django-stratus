@@ -390,6 +390,10 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  {
 	border: 1px solid black;
 	overflow: auto;
 }
+#console pre {
+  color: yellow;
+}
+
 /* ---------- DELETE -------------- */
 button.delete {
   float:left;

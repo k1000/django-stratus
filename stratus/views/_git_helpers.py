@@ -52,4 +52,4 @@ def get_diff(repo, path=None, commit_a=None, commit_b=None):
     return git.diff( *args )
 
 def get_commits(repo, branch, paths=[], page=0):
-    return repo.iter_commits(branch, paths, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE )
+    return list(repo.iter_commits(branch, paths, max_count=REPO_ITEMS_IN_PAGE, skip=page * REPO_ITEMS_IN_PAGE ) )

@@ -33,13 +33,14 @@
 <div id="console">
 	<p class="button">Console</p>
 	<div class="content">
-		<div id="console_output"></div>
+		<pre id="console_output"></pre>
 		<p>
 			<label for="console-input">Command</label>
 			<input id="console-input" type="text" />
 			<button id="console_enter">ENTER</button>
 		</p>
 	</div>
+	{% csrf_token %}
 </div>
 
 {% endblock breadcrumbs %}
@@ -77,15 +78,21 @@
 {% block git_tree %}{% endblock git_tree %}
 		</div><!-- /.file_browser -->
 
-		<p class="new_file">NEW FILE</p>
+		<a href="#" class="toggle">+</a>
+		<div id="file_tools" style="display: none">
+			<div id="id_file_upload">      
+			    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>
+			</div><!-- /id_file_upload -->
 
-		<div id="id_file_upload">      
-		    <noscript><p>Please enable JavaScript to use file uploader.</p></noscript>
-		</div><!-- /id_file_upload -->
+			<div id="new_file">
+				<input type="text" id="new_file_name" />
+				<button id="create_new_file">+</button>
+			</div>
 
-		<div id="new_file">
-			<input type="text" id="new_file_name" />
-			<button id="create_new_file">+</button>
+			<div id="new_folder">
+				<input type="text" id="new_folder_name" />
+				<button id="create_new_folder">+</button>
+			</div>
 		</div>
 	</div><!-- /.browser -->
 {% endif %}
@@ -100,10 +107,6 @@
 	</div><!-- /main -->
 </div> <!-- /.gitter -->
 
-
-
-
-
 {% if repo_name and branch_name %}
 <script type="text/javascript">
 var REPO = "{{repo_name}}";
@@ -115,6 +118,7 @@ var CONSOLE_URL = "{% url stratus-consol repo_name %}";
 {% if repo_name and branch_name %}
 var UPLOAD_URL = "{% url stratus-upload-file repo_name branch_name %}";
 var NEW_FILE_URL = "{% url stratus-new-file repo_name branch_name '' %}";
+var NEW_FOLDER_URL = "{% url stratus-new-folder repo_name branch_name '' %}";
 {% endif %}
 
 // ----------------- TREE INIT --------------------

@@ -8,6 +8,9 @@ urlpatterns = patterns('stratus.views.file',
 	url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/new/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
 		"new", name='stratus-new-file'),
 
+    url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/new-folder/(?P<path>[a-zA-Z0-9\-_\.\/]*)$', 
+        "new_folder", name='stratus-new-folder'),
+
     url(r'^(?P<repo_name>[a-z0-9\-_]+)/(?P<branch>[a-z0-9\-_]+)/upload/$', 
         "upload", name='stratus-upload-file'),
 

@@ -17,34 +17,51 @@ $(document).ready( function(){
 	var pagae1 = $(".page").html();
 	$(".page").remove();
 	var editors = new EditorManager();
-	var file_browser = new FileBrowserManager( tree_path );
-    
+
     var loc = window.location.pathname;
 
 	pages.new_page( loc, pagae1 );
 	// give current page id
 	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
-	tabs.mk_tab( loc , $(".page h1").html() );
+	tabs.mk_tab( loc , $(".page h2").html() );
 	//$.history.init(loadContent);
 
-	// ----------------- FILE BROWSER --------------------
-	$("#toogle_files").click( function(event){
+	if(tree_path){
+		var file_browser = new FileBrowserManager( tree_path );
+	}
+    
+	// ----------------- TOGGLE --------------------
+	$(".toggle").click( function(event){
 		event.preventDefault();
-		var self = $(this);
-		self.removeClass("open").addClass("closed");
-		self.parent().next().toggle("fast");
+		if ( this.rel ){
+			$(this.rel).toggle("fast");
+		} else {
+			$(this).next().toggle("fast");
+		}
 	})
 
 	// ----------------- NEW FILE --------------------
-	$("#create_new_file").click( function(){
+	$("#create_new_file").click( function(e){
+		e.preventDefault()
+		var dir = (file_browser.current_dir)? file_browser.current_dir + "/" : "";
 		var url = NEW_FILE_URL
-			//+ file_browser.current_path + "/"
+			+ dir
 			+ document.getElementById("new_file_name").value;
 		pages.hide_current();
 		tabs.mk_tab(url, "new file "+ url );
 		pages.open_page( url, function(url, data){ 
 			editors.mk( url );
 		});
+	})
+
+	// ----------------- NEW FOLDER --------------------
+	$("#create_new_folder").click( function(e){
+		e.preventDefault();
+		var dir = (file_browser.current_dir)? file_browser.current_dir + "/" : "";
+		var url = NEW_FOLDER_URL
+			+ dir
+			+ document.getElementById("new_folder_name").value;
+		get_page(url, "#messages");
 	})
 
 	// ----------------- OPEN URL --------------------
@@ -113,21 +130,31 @@ $(document).ready( function(){
 
 	// ----------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
-		var data = {"com":"git status"};
-		$('#console_output').load(CONSOLE_URL, data, function() {});
+		var cmd = $("#console-input").val()
+		var data = {
+			"com": cmd,
+			"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()
+		};
+		$('#console_output').append( "<p>"+ cmd +"</p>" );
+		$.post(
+			CONSOLE_URL,
+			data,
+			function(data) {
+				$('#console_output').append( "<pre>"+ data + "</pre>" );
+			},
+			"html"
+		)
 	})
 
 	$("#console > p").click( function(){
 		$("#console .content").toggle()
 	})
 
-	$("#console").draggable(function() {
-		helper: "original" 
+	$("#console").draggable( {
+		containment : $('#console'),
+  		handle      : $('#console > p')
+		//helper: "original" 
 	});
-
-	$("#console_enter").click( function(){
-		return false
-	})
 
 	// ----------------- MESSAGES --------------------
 	$("#messages a.close").click( function(){
@@ -163,12 +190,22 @@ $(document).ready( function(){
 		var form = self.parents("form");
 		var url = form.attr("action");
 		var rel = form.attr("rel");
-		
 		var to_upload = form.find("input[type=file]");
-		// if there is file to upload
-		if ( to_upload ) {
 
-			/*if (to_upload[0].files.length) {
+		$.ajax({
+				type: form.attr("method"),
+				url: url,
+				data: form.serialize(),
+				dataType: "json",
+				success: function(data){
+					dispatch_form_respond(url, rel, data)
+				}
+		});
+
+		// if there is file to upload
+		/*if ( to_upload ) {
+
+			if (to_upload[0].files.length) {
 				// https://github.com/valums/file-uploader
 				var uploader = new qq.FileUploader({
 				    // pass the dom node (ex. $(selector)[0] for jQuery users)
@@ -183,19 +220,32 @@ $(document).ready( function(){
 				}); 
 			} else {
 				show_messages( ["You must select file to upload"] );
-			}*/
+			}
 		} else {
-			$.ajax({
-				type: form.attr("method"),
-				url: url,
-				data: form.serialize(),
-				dataType: "json",
-				success: function(data){
-					dispatch_form_respond(url, rel, data)
-				}
-			});
-		}
+			
+		}*/
 	})
+
+	function dispatch_form_respond(url, rel, data){
+		if ( data.msg ) {
+			show_messages( data.msg );
+		}
+		if ( rel == "contents" ) {
+			pages.hide_current();
+			pages.new_page( url, data.html );
+			var tab_text = $(data.html).find("h1").text().replace('"', "");
+			tabs.mk_tab(url, tab_text);
+		} else if ( rel == "edit" ) {
+			pages.hide_current();
+			pages.open_page( url, function(url, data){ 
+				editors.mk( url );
+			});
+			var tab_text = $(data.html).find("h1").text().replace('"', "");
+			tabs.mk_tab(url, tab_text);
+		} else {
+			$(rel).html( data.html );
+		}
+	}
 })
 
 function show_messages( msgs ){
@@ -206,32 +256,22 @@ function show_messages( msgs ){
 	$("#messages ul").html( msg_out ).parent().toggle(true);
 }
 
-function dispatch_form_respond(url, rel, data){
-	if ( data.msg ) {
-		show_messages( data.msg );
-	}
-	if (  rel == "contents") {
-		pages.hide_current();
-		pages.new_page( url, data.html );
-		var tab_text = $(data.html).find("h1").text().replace('"', "");
-		tabs.mk_tab(url, tab_text);
-	} else {
-		$(rel).html( data.html );
-	}
-}
 
 function get_prev_next( obj, current ) {
 	// gets previous and next on both sides of current
 	var prev_next = {"prev":null, "next":null};
 	var var_prev = null;
+	var current_found = false;
+
 	for (var key in obj){
 		if (hasOwnProperty.call(obj, key)){
-			if ( prev_next.prev ) {
+			if ( prev_next.prev || current_found) {
 				prev_next.next =  key;
 				return prev_next
 			}
 			if ( key == current ) {
 				prev_next.prev = var_prev;
+				current_found = true;
 			}
 			var_prev = key;
 		}
@@ -262,7 +302,7 @@ function FileBrowserManager( path ){
 	this.set_uploader = function( dir ){
 		var dir = dir;
 		var self = this;
-		var uploader = new qq.FileUploader({
+		this.uploader = new qq.FileUploader({
 		    // pass the dom node (ex. $(selector)[0] for jQuery users)
 		    element: document.getElementById('id_file_upload'),
 		    // get other data
@@ -277,6 +317,7 @@ function FileBrowserManager( path ){
 		    }
 		}); 
 	}
+
 	this.set_uploader( this.current_dir )
 
 	this.refresh = function(){
