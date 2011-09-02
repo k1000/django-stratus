@@ -130,20 +130,11 @@ $(document).ready( function(){
 
 	// ----------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
-		var cmd = $("#console-input").val()
-		var data = {
-			"com": cmd,
-			"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()
-		};
+		var cmd = $("#console-input").val();
 		$('#console_output').append( "<p>"+ cmd +"</p>" );
-		$.post(
-			CONSOLE_URL,
-			data,
-			function(data) {
-				$('#console_output').append( "<pre>"+ data + "</pre>" );
-			},
-			"html"
-		)
+		git_command( cmd, function( data ) {
+			$('#console_output').append( "<pre>"+ data + "</pre>" );
+		})
 	})
 
 	$("#console > p").click( function(){
@@ -155,6 +146,22 @@ $(document).ready( function(){
   		handle      : $('#console > p')
 		//helper: "original" 
 	});
+
+	function git_command( cmd, callback ){
+		var callback = callback;
+		var send_data = {
+			"com": cmd,
+			"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()
+		};
+		$.post(
+			CONSOLE_URL,
+			send_data,
+			function(data) {
+				callback(data);
+			},
+			"html"
+		)
+	}
 
 	// ----------------- MESSAGES --------------------
 	$("#messages a.close").click( function(){
@@ -255,6 +262,7 @@ function show_messages( msgs ){
 	};
 	$("#messages ul").html( msg_out ).parent().toggle(true);
 }
+
 
 
 function get_prev_next( obj, current ) {
