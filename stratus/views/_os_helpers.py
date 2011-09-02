@@ -3,7 +3,10 @@ import codecs
 from django.core.files.uploadhandler import MemoryFileUploadHandler
 import logging
 
+def normalize_name( str ):
 
+    return str
+    
 #http://fairviewcomputing.com/blog/2008/10/21/ajax-upload-progress-bars-jquery-django-nginx/
 class ProgressBarUploadHandler(MemoryFileUploadHandler):
     """
