@@ -132,10 +132,10 @@ $(document).ready( function(){
 	function reload_window( data ) { location.reload(true) };
 
 	var git_commands = {
-		git_status: { str:"git status" },
-		create_branch: { str:"git checkout -b {{name}}", param:["name"], callback:reload_window },
+		git_status: 	{ str:"git status" },
+		create_branch: 	{ str:"git checkout -b {{name}}", param:["name"], callback:reload_window },
 		activate_branch: { str:"git checkout {{name}}", param:["name"], callback:reload_window },
-		delete_branch: { str:"git branch rm {{name}}", param:["name"], callback:reload_window }
+		delete_branch: 	{ str:"git branch -D {{name}}", param:["name"], callback:reload_window }
 	}
 	$(document).delegate('.cmd', 'click', function(event) {
 		event.preventDefault()

@@ -48,6 +48,7 @@ def search(request, repo_name, branch):
         form = form,
         query = query,
         found_files = found_files,
+        repo = repo,
         repo_name = repo_name,
         branch_name = branch,
     ) 
@@ -90,6 +91,7 @@ def replace(request, repo_name, branch):
         form = form,
         query = query,
         found_files = found_files,
+        repo = repo,
         repo_name = repo_name,
         branch_name = branch,
     ) 

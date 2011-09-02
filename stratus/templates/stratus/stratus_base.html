@@ -8,9 +8,23 @@
 		<li class="project">{{ repo_name }}</li>
 		{% endif %}
 		{% if repo_name and branch_name %}
-		<li>"<a class="ajax" rel="contents" href="{% url stratus-log repo_name branch_name %}" title="Commits at {{branch_name}} branch" >{{ branch_name }}</a>" branch</li>	
+		<li>
+			<a class="ajax" rel="contents" href="{% url stratus-log repo_name branch_name %}" title="Commits at {{branch_name}} branch" >
+				{{ branch_name }}{% if repo.active_branch.name == branch_name %}*{% endif %} 
+			</a> branch
+			<ul class="branches">
+			{% for branch in repo.branches %}
+			{% if branch.name != branch_name %} 
+				<li>
+					<a href="{% url stratus-log repo_name branch.name %}" {% if repo.active_branch.name == branch.name %} class="active" {% endif %} >
+						{{ branch.name }}{% if repo.active_branch.name == branch.name %}*{% endif %} 
+					</a>
+				</li>
+			{% endif %}
+			{% endfor %}
+			</ul>
+		</li>
 		{% endif %}
-
 {% block git_breadcrumbs %}{% endblock git_breadcrumbs %}
 	</ul>
 </div>

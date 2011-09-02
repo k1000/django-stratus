@@ -77,6 +77,7 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
         file_meta = file_meta,
         repo_name = repo_name,
         branch_name = branch,
+        repo = repo,
         path = path,
     )
     return mix_response( 
@@ -148,6 +149,7 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
         repo_name = repo_name,
         branch_name = branch,
         path = path,
+        repo = repo,
         success = success,
     )
     return mix_response( 
@@ -191,6 +193,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
     file_meta = dict(
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         abspath = tree.abspath,
+        repo = repo,
         mime = tree.mime_type,
         size = tree.size,
         tree = tree,
@@ -246,6 +249,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         msg = msgs,
         repo_name = repo_name,
         branch_name = branch,
+        repo = repo,
         delete_form = FileDeleteForm( initial={"message":MSG_DELETE_SUCCESS % path }),
         path = path,
         name = path.split("/")[-1:][0],
@@ -317,6 +321,7 @@ def view(request, repo_name, branch, path, commit_sha=None,):
         diff = diff,
         file_meta = file_meta,
         repo_name = repo_name,
+        repo = repo,
         branch_name = branch,
         path = path,
         name = path.split("/")[-1:][0],
@@ -359,6 +364,7 @@ def new_folder(request, repo_name, branch, path ):
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         breadcrumbs = make_crumbs(path),
         repo_name = repo_name,
+        repo = repo,
         msg = msgs,
         branch_name = branch,
         reload_fbrowser = success,
@@ -427,6 +433,7 @@ def delete(request, repo_name, branch, path ):
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         breadcrumbs = make_crumbs(path),
         repo_name = repo_name,
+        repo = repo,
         msg = msgs,
         branch_name = branch,
         reload_fbrowser = success,
@@ -503,6 +510,7 @@ def rename(request, repo_name, branch, file_path):
         form = form,
         repo_name = repo_name,
         branch_name = branch,
+        repo = repo,
         path = file_path,
     ) 
     return mix_response( 

@@ -24,6 +24,7 @@ def log(request, repo_name, branch=REPO_BRANCH, path=None):
         repo_name = repo_name,
         branch_name = branch,
         commits = commits,
+        repo = repo,
         next_page = page + 1,
         path = path,
         url= reverse('stratus-log', args=[repo_name, branch ])
@@ -56,6 +57,7 @@ def view(request, repo_name, branch, commit_sha=None):
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         repo_name = repo_name,
         branch_name = branch,
+        repo = repo,
         diff = diff,
         commit = commit,
     )
@@ -85,6 +87,7 @@ def undo(request, repo_name, branch_name):
         STRATUS_MEDIA_URL = STRATUS_MEDIA_URL,
         repo_name = repo_name,
         branch_name = branch_name,
+        repo = repo,
         msg=msgs, 
     )
     return mix_response( 

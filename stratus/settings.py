@@ -20,6 +20,6 @@ EDITABLE_MIME_TYPES = getattr(settings,"EDITABLE_MIME_TYPES", ["text", "applicat
 PARTIAL_PREFIX = getattr(settings,"PARTIAL_PREFIX", "_")
 
 #GIT Commands
-GIT_RESET = ["--hard", "HEAD^"]
+GIT_RESET = ["--soft", "HEAD^"]
 GIT_COMMIT = ["-m",]
 GIT_AMMEND = ["--amend -m",]
