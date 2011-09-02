@@ -115,7 +115,10 @@ def consol(request, repo_name):
             if com_str[0] != "git":
                 result = "first command must be git"
             else:
-                command = getattr(git, com_str[1])
-                result = escape( command( com_str[2:] ) )
+                try:
+                    command = getattr(git, com_str[1])
+                    result = escape( command( com_str[2:] ) )
+                except git.GitCommandError, e:
+                    result = "GIT Command error %s" % e
                 
     return HttpResponse(result, mimetype='application/javascript')

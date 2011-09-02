@@ -129,18 +129,21 @@ $(document).ready( function(){
 	}
 
 	// ----------------- COMMANDS --------------------
+	function reload_window( data ) { location.reload(true) };
+
 	var git_commands = {
-		create_branch: { str:"git checkout -b {{name}}", param:["name"] },
-		activate_branch: { str:"git checkout {{name}}", param:["name"] },
-		delete_branch: { str:"git branch rm {{name}}", param:["name"] }
+		git_status: { str:"git status" },
+		create_branch: { str:"git checkout -b {{name}}", param:["name"], callback:reload_window },
+		activate_branch: { str:"git checkout {{name}}", param:["name"], callback:reload_window },
+		delete_branch: { str:"git branch rm {{name}}", param:["name"], callback:reload_window }
 	}
 	$(document).delegate('.cmd', 'click', function(event) {
 		event.preventDefault()
 		var command = git_commands[this.name];
-		var param_len = command.param.length;
 		var cmd = command.str;
 		var repo = this.getAttribute("data-repo");
 		if (command.param){
+			var param_len = command.param.length;
 			var input_param = $(this).parent().find("input[name=param]").val().split(" ");
 			var input_param_len = input_param.length;
 			if ( param_len != input_param_len ) {
@@ -152,13 +155,14 @@ $(document).ready( function(){
 				cmd = cmd.replace(to_replece, input_param[i]);
 			};
 		}
-		git_command( repo, cmd );
+		git_command( repo, cmd, command.callback );
+		return false
 	})
 
 	// ----------------- CONSOLE --------------------
 	$("#console_enter").click(function( ){
 		var cmd = $("#console-input").val();
-		$('#console_output').append( "<p>"+ cmd +"</p>" );
+		$('#console_output').append( "<p>$ "+ cmd +"</p>" );
 		git_command( REPO, cmd, function( data ) {
 			$('#console_output').append( "<pre>"+ data + "</pre>" );
 		})
@@ -188,7 +192,7 @@ $(document).ready( function(){
 				if (callback) {
 					callback(data);
 				} else {
-					show_messages([data]);
+					show_messages(["<pre>"+ data +"</pre>"]);
 				}
 			},
 			"html"

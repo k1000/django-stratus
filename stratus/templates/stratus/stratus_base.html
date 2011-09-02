@@ -27,6 +27,7 @@
 	</form>
 	<a href="{% url stratus-undo repo_name branch_name %}" class="undo button ajax" rel="#tool_box" title="undo last commit">undo</a>
 	<a href="https://github.com/joyent/node/wiki/modules" id="open_preview" title="open preview" class="button">preview</a>
+	<a href="#" name="git_status" title="git status" class="button cmd" data-repo="{{repo_name}}">status</a>
 </div>
 {% endif %}
 

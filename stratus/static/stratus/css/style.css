@@ -94,7 +94,9 @@ textarea{
 ul {
 	clear: both;
 }
-
+pre {
+	color: #e2f6e8;
+}
 /* ---------- LAYOUT -------------- */
 #content {
 	padding-top: 80px;
@@ -384,16 +386,32 @@ html ul.tabs li.active, html ul.tabs li.active a:hover  {
 }
 #console_output{
 	clear: both;
-  color: white;
+    color: white;
 	height: 200px;
-	background: #1a4465;
+	background: #2b2a2a;
 	border: 1px solid black;
 	overflow: auto;
+	padding: 4px;
 }
-#console pre {
-  color: yellow;
+#console_output p{
+	color: #fbf6b1;
+	background: black;
 }
-
+#console input {
+	width: 355px;
+}
+#console p.button {
+	float: left;
+	background: url(/static/stratus/images/terminal.png) no-repeat;
+	border: 0;
+	text-indent: -999em;
+	display: block;
+	width:22px;
+	height: 28px;
+}
+#console_enter {
+	margin-bottom: 0;
+}
 /* ---------- DELETE -------------- */
 button.delete {
   float:left;
@@ -407,7 +425,7 @@ button.delete {
    right: 20px;
    background: rgba( 0,0, 0, .8);
    padding: 10px 10px 10px 30px;
-   width: 300px;
+   min-heightwidth: 300px;
    z-index: 12;
    -moz-border-radius: 10px;
    -webkit-border-radius: 10px;
