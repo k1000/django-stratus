@@ -464,13 +464,12 @@ button.delete {
 .qq-upload-failed-text {display:none;}
 .qq-upload-fail .qq-upload-failed-text {display:inline;}
 
-/* ---------- FILE UPLOADER -------------- */
+/* ---------- FILE TOOLS -------------- */
 
-#new_file {
-	margin: 10px;
-	overflow: hidden;
+#file_tools {
+	padding: 0 10px 10px;
 }
-#new_file button{
+#file_tools button{
 	float: right;
 	margin-bottom: 0;
 	width: 2em;

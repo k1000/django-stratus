@@ -40,6 +40,7 @@ def view(request, repo_name, branch=REPO_BRANCH, path=None, commit_sha=None ):
         commit = commit,
         tree = the_tree.list_traverse(depth = 1),
         breadcrumbs = make_crumbs(path),
+        parent_dir = dir_path[:-1],
         dir_path = dir_path,
         path = path,
     )

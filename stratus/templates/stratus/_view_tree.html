@@ -10,7 +10,7 @@
 
 	<ul class="list">
 		{% if dir_path.0 %}
-		<li><a href="{% if breadcrumbs|last %}{% url stratus-tree-view repo_name branch_name breadcrumbs|last|first %}{% else %}{% url stratus-tree-view repo_name branch_name "" %}{% endif %}" class="ajax" rel="index" >..</a>
+		<li><a href="{% url stratus-tree-view repo_name branch_name parent_dir|join:"/" %}" class="ajax" rel="index" >..</a>
 		{% endif %}
 
 		{% for element in tree %}
