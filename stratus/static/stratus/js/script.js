@@ -206,7 +206,7 @@ $(document).ready( function(){
 	})
 
 	// -------------------- EDIT  --------------------
-	$(document).delegate('form.ajax_editor button', 'click', function(event) {
+	$(document).delegate('form.ajax_editor .button', 'click', function(event) {
 		event.preventDefault();
 		var self = $(this);
 		var form = self.parents("form");

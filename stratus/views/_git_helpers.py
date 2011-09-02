@@ -1,17 +1,20 @@
 from git import *
 from django.http import Http404
 from stratus.views._view_helpers import error_view
-from stratus.settings import REPOS, REPO_ITEMS_IN_PAGE, GIT_COMMIT
+from stratus.settings import REPOS, REPO_ITEMS_IN_PAGE, GIT_COMMIT, GIT_AMMEND
 
 MSG_COMMIT_ERROR = "There were problems with making commit"
 MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
 
-def mk_commit(repo, message, path ):
+def mk_commit(repo, message, path, ammend=True ):
     result_msg = ""
     git = repo.git
+    cmd = GIT_COMMIT
     try:
         git.add(path)
-        result_msg = git.commit(GIT_COMMIT + [u"""%s""" % message])
+        if ammend:
+            cmd = GIT_AMMEND
+        result_msg = git.commit(cmd + [u"""%s""" % message])
         #commit_result = index.commit("""%s""" % message)
     except GitCommandError, e:
         #import ipdb; ipdb.set_trace()

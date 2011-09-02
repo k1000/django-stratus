@@ -15,7 +15,6 @@
 	</ul>
 </div>
 
-
 {% if repo_name and branch_name %}
 <div id="project_tools">
 	<form method="get" action="{% url stratus-search repo_name branch_name %}" class="serch_form ajax" rel="contents">
@@ -43,10 +42,7 @@
 	</div>
 	{% csrf_token %}
 </div>
-
 {% endblock breadcrumbs %}
-
-
 
 {% block content %}
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>

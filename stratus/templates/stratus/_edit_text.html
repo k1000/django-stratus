@@ -12,7 +12,10 @@
 			{{ form.message.errors }}
 		</div>
 		{% csrf_token %}
-		<p><button class="commit">COMMIT</button></p>
+		<p>
+			<input class="ammend button" type="submit" name="ammend" value="AMMEND" />
+			<input class="commit button" type="submit" name="commit" value="COMMIT" />
+		</p>
 
 		<script type="text/javascript"> 
 
