@@ -4,7 +4,8 @@ from django.utils import simplejson
 from django.core.context_processors import csrf
 #import json
 from django.template import RequestContext, TemplateDoesNotExist
-from django.template.response import TemplateResponse
+#from django.template.response import TemplateResponse
+from django.shortcuts import render
 from django.template.loader import render_to_string, get_template
 from django.http import  HttpResponse
 
@@ -56,7 +57,6 @@ def partial_json_convert( request, template_name, context ):
 
     
 def mix_response(request, template_name, context, json_convert=None):
-
     if request.is_ajax():
         if json_convert:
             response_dict = json_convert( request, template_name, context )
@@ -64,12 +64,14 @@ def mix_response(request, template_name, context, json_convert=None):
             response_dict = partial_json_convert(request, template_name, context )
 
         return HttpResponse(simplejson.dumps(response_dict, default=to_json), mimetype='application/javascript')
+    
+    return render(
+        request, 
+        template_name,
+        context,
+        content_type="application/xhtml+xml")
 
-    else:
-    	return TemplateResponse( 
-            request, 
-            template_name, 
-            context)
+
 
 def error_view(request, msg, code=None):
     return mix_response( 
