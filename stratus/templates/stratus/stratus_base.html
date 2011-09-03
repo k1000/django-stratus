@@ -133,6 +133,7 @@ var NEW_FOLDER_URL = "{% url stratus-new-folder repo_name branch_name '' %}";
 // ----------------- TREE INIT --------------------
 var tree_path =  {% if path %} '{% url stratus-tree-view repo_name branch_name path %}'
 {% else %} '{% url stratus-tree-view repo_name branch_name "" %}' {% endif %};
+
 {% endif %}
 
 </script>
@@ -143,7 +144,7 @@ var tree_path =  {% if path %} '{% url stratus-tree-view repo_name branch_name p
 <script type="text/template" id="url_template">
 <div class="page prev">
 <p>
-	<input type="text" name="src" value="sssss" >
+	<input type="text" name="src" value="sssss" />
 	<button class="go">GO</button>
 </p>
 <iframe src="sssss"></iframe>

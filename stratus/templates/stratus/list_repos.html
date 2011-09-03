@@ -2,7 +2,7 @@
 
 {% block git_content %}
 <div class="page">
-<h2>GIT Repositories<h2>
+<h2>GIT Repositories</h2>
 <ul class="repos">
 	{% for repo_name, repo in repos.items %}
 	<li><h2>{{ repo_name }}</h2>
@@ -19,7 +19,7 @@
 					</a>
 					
 					<a name="delete_branch" href="#" class="delete cmd" title="delete branch" data-repo="{{repo_name}}">x</a>
-					<input type="hidden" name="param" value="{{ branch.name }}">
+					<input type="hidden" name="param" value="{{ branch.name }}" />
 					{% if repo.active_branch.name != branch.name %}
 					<a name="activate_branch" href="#" class="activate cmd" title="activate branch" data-repo="{{repo_name}}">activate</a>
 					{% endif %}
@@ -32,11 +32,12 @@
 					{% endfor %}
 				</ul>
 				{% endif %}
+			</li>
 			{% endfor %}
 		</ul>
 
 		<p class="create_branch">
-			<input type="text" name="param">
+			<input type="text" name="param" />
 			<button name="create_branch" class="cmd" data-repo="{{repo_name}}" placeholder="name" >CREATE BRANCH</button>
 		</p>
 
@@ -48,5 +49,5 @@
 	</li>
 	{% endfor %}
 </ul>
-</page>
+</div><!-- /.page -->
 {% endblock %}

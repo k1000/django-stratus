@@ -9,8 +9,11 @@
 
 
 	<ul class="list">
+	
 		{% if dir_path.0 %}
-		<li><a href="{% url stratus-tree-view repo_name branch_name parent_dir|join:"/" %}" class="ajax" rel="index" >..</a>
+		<li>
+			<a href="{% url stratus-tree-view repo_name branch_name parent_dir|join:"/" %}" class="ajax" rel="index" >..</a>
+		</li>
 		{% endif %}
 
 		{% for element in tree %}
@@ -27,5 +30,6 @@
 			<a href="{% url stratus-rename-file repo_name branch_name element.path %}" class="rename ajax" rel="appendix" >rename</a>
 		</li>
 		{% endfor %}
+
 	</ul>
-</div>
+
