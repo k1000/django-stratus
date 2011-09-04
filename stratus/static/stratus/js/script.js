@@ -30,6 +30,10 @@ $(document).ready( function(){
 		var file_browser = new FileBrowserManager( tree_path );
 	}
     
+    $(document).bind('page_created', function(e, data) { 
+	    console.log( data.url )
+	} );
+
 	// ------------------- TOGGLE --------------------
 	$(".toggle").click( function(event){
 		event.preventDefault();
@@ -128,14 +132,21 @@ $(document).ready( function(){
 		}
 	}
 
+	function str_replace( str, replacer ){
+		for (replace in replacer) {
+			str = str.replace("{{"+replace+"}}", replacer[replace]);
+		};
+		return str
+	}
+
 	// ----------------- COMMANDS --------------------
 	function reload_window( data ) { location.reload(true) };
 
 	var git_commands = {
-		git_status: 	{ str:"git status" },
-		create_branch: 	{ str:"git checkout -b {{name}}", param:["name"], callback:reload_window },
+		git_status: { str:"git status" },
+		create_branch: { str:"git checkout -b {{name}}", param:["name"], callback:reload_window },
 		activate_branch: { str:"git checkout {{name}}", param:["name"], callback:reload_window },
-		delete_branch: 	{ str:"git branch -D {{name}}", param:["name"], callback:reload_window }
+		delete_branch: { str:"git branch -D {{name}}", param:["name"], callback:reload_window }
 	}
 	$(document).delegate('.cmd', 'click', function(event) {
 		event.preventDefault()
@@ -299,8 +310,6 @@ function show_messages( msgs ){
 	$("#messages ul").html( msg_out ).parent().toggle(true);
 }
 
-
-
 function get_prev_next( obj, current ) {
 	// gets previous and next on both sides of current
 	var prev_next = {"prev":null, "next":null};
@@ -441,30 +450,35 @@ function EditorManager( options ){
 	this.editors = {};
 	this.modes = [];
 	this.mk = function( url, mode, options ){
-		/*
-		this.new_mode( mode, function() {
-			//console.log( url )
-			this.activate_editor( url, mode );
-		});
-		*/
 
 		var text_area = $("form[action='"+ url +"'] textarea[name=file_source]");
-
-		var mode = (mode)? mode : text_area.attr('class');
 		
-		var code_mirror = CodeMirror.fromTextArea( text_area[0], {
-			mode: {name: mode},
-			lineNumbers: true,
-			indentUnit: 4
-		});
-		this.editors[url] = code_mirror;
+		if (text_area.length > 0){
+			/*
+			this.new_mode( mode, function() {
+				//console.log( url )
+				this.activate_editor( url, mode );
+			});
+			*/
+			text_area.trigger("edit", {url:url});
+			var mode = (mode)? mode : text_area.attr('class');
+			var code_mirror = CodeMirror.fromTextArea( text_area[0], {
+				mode: {name: mode},
+				lineNumbers: true,
+				indentUnit: 4
+			});
+			this.editors[url] = code_mirror;
+		}
 	}
+
 	this.save = function( url ){
 		this.editors[url].save();
 	}
+
 	this.rm_editor = function( url ){
 		delete this.editors[url];
 	}
+	
 	this.new_mode = function( mode, callback ){
 		for (var i = this.modes.length - 1; i >= 0; i--) {
 			if (mode === this.modes[i]) 
@@ -474,34 +488,36 @@ function EditorManager( options ){
 			var url = STRATUS_MEDIA_URL +"stratus/CodeMirror-2.12/mode/" + mode + "/" + mode + ".js";
 			loadScript( url, callback )		
 		}
-
 	}
 }
 
 
-function PageManager( page_container, options ){
-
+function PageManager( page_container, tabber, options ){
 	this.current = "";
 	this.page_container = page_container;
 	this.pages = {};
 	this.transition = false;
+	this.tabber = tabber;
 	this.new_page = function( url, data ){
+		// creates page from data and returns it
 		var id = this.mk_page_id( url );
 		this.pages[url] = id;
 		this.set_current( url );
-        //url = url.replace(/^.*#/, '');
-        //$.history.load(url);
-		this.page_container.append("<div class='page' id='" + id + "' >" + data + "</div>");
-		return id
+		var new_page = $("<div class='page' id='" + id + "' >" + data + "</div>").appendTo(this.page_container);
+		this.page_container.trigger("page_created", {'sender': new_page, "url":url });
+		return new_page
 	}
 	this.rm_page = function( url ){
-		$("#"+this.get_page_id(url)).remove();
+		$("#"+this.get_page_id(url))
+			.trigger("page_removed", {url:url})
+			.remove();
 		delete this.pages[url]
 	}
 	this.mk_page_id = function( url ){
 		return url.replace(/\//g, "_").replace(/\./g, "").replace(/:/g, "")
 	}
 	this.set_current = function( url ){
+		this.page_container.trigger("current_page", {url:url})
 		this.current = url;
 	}
 	this.get_page_id = function( url ){
@@ -511,12 +527,15 @@ function PageManager( page_container, options ){
 		return this.pages[ this.current ]
 	}
 	this.get_page = function( url ){
+		// returns page content by its url
 		return $("#"+this.pages[ url ])
 	}
 	this.get_current = function( ){
+		// returns current page
 		return $("#"+this.pages[ this.current ])
 	}
 	this.open_page = function( url, call_back ){
+		// opens page from url
 		var self = this;
 		var url = url;
 		var call_back = call_back;
@@ -528,7 +547,7 @@ function PageManager( page_container, options ){
 		}, "json")
 	}
 	this.hide_current = function( ){
-		var page = this.get_current( );
+		var page = this.get_current();
 		this.transition = true;
 		var self = this;
 		return page.hide('slide', {direction: 'left'}, 700, function(){
@@ -536,9 +555,8 @@ function PageManager( page_container, options ){
 		});
 	}
 	this.show_page = function( url ){
-		var page = this.get_page( url );
+		var page = this.get_page( url ).show();
 		this.set_current( url );
-		page.show();
 	}
 }
 

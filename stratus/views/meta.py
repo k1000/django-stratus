@@ -13,6 +13,7 @@ def repos(request):
         "STRATUS_MEDIA_URL": STRATUS_MEDIA_URL,
         "repos":dict([ (repo_name, get_repo( repo_name )) for repo_name in REPOS]),
     }
+    
     return mix_response( 
         request, 
         'stratus/list_repos.html', 

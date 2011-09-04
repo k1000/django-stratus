@@ -9,10 +9,9 @@
 		{% endfor %}
 		<li>{{ dir_path|last }}/</li>
 	</ul>
-
 	<ul class="list">
 		{% if dir_path.0 %}
-		<li><a href="./" class="ajax" rel="contents" >..</a>
+		<li><a href="./" class="ajax" rel="contents" >..</a></li>
 		{% endif %}
 
 		{% for element in tree %}
@@ -30,4 +29,4 @@
 		</li>
 		{% endfor %}
 	</ul>
-</div>
+</div><!-- /.tree -->
