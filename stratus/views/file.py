@@ -13,8 +13,8 @@ from _os_helpers import file_type_from_mime, write_file, handle_uploaded_file
 
 from stratus.settings import REPOS, REPO_BRANCH, REPO_ITEMS_IN_PAGE, REPO_RESTRICT_VIEW
 from stratus.settings import FILE_BLACK_LIST, STRATUS_MEDIA_URL, EDITABLE_MIME_TYPES
-
 from stratus.forms import TextFileEditForm, FileEditForm, FileDeleteForm, FileUploadForm, RenameForm, SearchForm
+from stratus import signals
 
 MSG_COMMIT_ERROR = "There were problems with making commit"
 MSG_COMMIT_SUCCESS = u"Commit has been executed. %s"
@@ -58,6 +58,7 @@ def new(request, repo_name, branch=REPO_BRANCH, path=None ):
 
             if file_writen:
                 msg = form.cleaned_data["message"]
+                signals.file_created.send(sender=repo, file_path=file_path, url="")
                 result_msg = mk_commit(repo, msg, file_path )
                 msgs.append( result_msg )
             else:
@@ -125,6 +126,7 @@ def upload(request, repo_name, branch=REPO_BRANCH ):
             file_writen = handle_uploaded_file(file_abs_path, request.FILES['file_source'])
 
         if file_writen:
+            signals.file_created.send(sender=repo, file_path=file_path, url="")
             msgs.append( MSG_UPLOAD_SUCCESS % file_path)
             message = MSG_COMMIT_SUCCESS % file_path
             msg = mk_commit(repo, message, file_path )
@@ -205,6 +207,8 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
         form_class = TextFileEditForm
     else:
         form_class = FileEditForm
+
+    signals.file_edit_start.send(sender=repo, file_path=file_path, url="")
     
     if request.method == 'POST':
         form = form_class( request.POST, request.FILES )
@@ -416,6 +420,7 @@ def delete(request, repo_name, branch, path ):
         if removed:
             git = repo.git
             del_message = git.rm("-r", file_abs_path)
+            signals.file_removed.send(sender=repo, file_path=file_path, url="")
             msgs.append( del_message )
             msg = MSG_DELETE_SUCCESS % path
             commit_result = git.commit("-m", u"""%s""" % msg)
