@@ -549,9 +549,8 @@ button.delete {
 #log {
   display: block;
   /* enough padding to clear the toolbar.. is there a better way to do this? */
-  padding-bottom: 5.1em; 
-  background: inherit;
-  overflow: hidden;
+  height: 20em;
+  overflow: auto;
 }
 
 /* not very important info */
@@ -564,7 +563,9 @@ button.delete {
   float: left;
   clear: both;
 }
-
+.msg-text {
+  color: white;
+}
 .message td {
   vertical-align: top;
 }

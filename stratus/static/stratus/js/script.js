@@ -29,9 +29,13 @@ $(document).ready( function(){
 	if(window.tree_path){
 		var file_browser = new FileBrowserManager( tree_path );
 	}
-    
-    $(document).bind('page_created', function(e, data) { 
-	    console.log( data.url )
+
+	// --------------- MESSAGE EVENTS --------------------
+	$(document).bind('page_created', function(e, data) { 
+	    send("page "+ data.url + " created");
+	} );
+	$(document).bind('page_created', function(e, data) { 
+	    send("page "+ data.url + " created");
 	} );
 
 	// ------------------- TOGGLE --------------------
@@ -225,15 +229,13 @@ $(document).ready( function(){
 		editors.save(url);
 		
 		$.ajax({
-			   type: "post",
-			   url: url,
-			   data: form.serialize(),
-			   dataType: "json",
-			   success: function(data){
-			   		if ( data.msg ) {
-			   			show_messages( data.msg );
-			   		}
-			   }
+			type: "post",
+			url: url,
+			data: form.serialize(),
+			dataType: "json",
+			success: function(data){
+				if ( data.msg ) show_messages( data.msg );
+			}
 		});
 	})
 
@@ -293,6 +295,7 @@ $(document).ready( function(){
 			pages.hide_current();
 			pages.open_page( url, function(url, data){ 
 				editors.mk( url );
+				this.page_container.trigger("page_edit", { "url":url });
 			});
 			var tab_text = $(data.html).find("h1").text().replace('"', "");
 			tabs.mk_tab(url, tab_text);
@@ -416,9 +419,6 @@ function TabManager( tab_container, pages ){
 		return false;
 	});
 
-	this.get_tabs = function() {
-		
-	}
 	this.mk_tab = function( url, title ){
 		this.deactivate_tabs();
 		return this.tab_container.append("<li class='active' ><a href='#' class='close' title='close' >x</a><a href='" + url + "' title=\""+ title +"\" class='tab' >" + title + "</a></li>")
@@ -478,7 +478,7 @@ function EditorManager( options ){
 	this.rm_editor = function( url ){
 		delete this.editors[url];
 	}
-	
+
 	this.new_mode = function( mode, callback ){
 		for (var i = this.modes.length - 1; i >= 0; i--) {
 			if (mode === this.modes[i]) 
