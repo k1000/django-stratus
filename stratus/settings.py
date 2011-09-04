@@ -13,7 +13,7 @@ FILE_BLACK_LIST = getattr(settings,"FILE_BLACK_LIST",
 	("settings.py",) 
 )
 #STRATUS_MEDIA_URL =  "%sstratus/" %  getattr(settings,"STRATUS_MEDIA_URL", settings.STATIC_URL )
-STRATUS_MEDIA_URL  = "http://127.0.0.1:8002/stratus/"
+STRATUS_MEDIA_URL  = "http://127.0.0.1:8002/static/stratus/"
 # limit editor height for large documets
 LIMIT_EDITOR_HEIGHT = getattr(settings,"LIMIT_EDITOR_HEIGHT", "300" ) 
 EDITABLE_MIME_TYPES = getattr(settings,"EDITABLE_MIME_TYPES", ["text", "application"] )

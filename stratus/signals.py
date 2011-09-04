@@ -7,6 +7,6 @@ file_created = django.dispatch.Signal(providing_args=["repo", "file_path", "url"
 file_removed = django.dispatch.Signal(providing_args=["repo", "file_path", "url"])
 
 # git
-commit = django.dispatch.Signal(providing_args=["repo", "url"])
-push = django.dispatch.Signal(providing_args=["repo", "url"])
-pull = django.dispatch.Signal(providing_args=["repo", "url"])
+commit = django.dispatch.Signal(providing_args=["repo", "message"])
+push = django.dispatch.Signal(providing_args=["repo", "message"])
+pull = django.dispatch.Signal(providing_args=["repo", "message"])

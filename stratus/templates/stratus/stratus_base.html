@@ -61,12 +61,15 @@
 {% block content %}
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.15/jquery-ui.min.js"></script>
+<script type="text/javascript" src="//cdn.socket.io/stable/socket.io.js" ></script>
+
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}js/fileuploader.js" charset="utf-8"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}CodeMirror-2.12/lib/codemirror.js"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}CodeMirror-2.12/lib/overlay.js"></script>
 <!-- <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}stratus/CodeMirror-2.12/mode/python/python.js"></script> -->
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}CodeMirror-2.12/mode/diff/diff.js"></script>
 <script type="text/javascript" src="{{ STRATUS_MEDIA_URL }}js/script.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/client.js"></script>
 
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}CodeMirror-2.12/lib/codemirror.css" /> 
 <link rel="stylesheet" type="text/css" href="{{ STRATUS_MEDIA_URL }}css/style.css" />
@@ -116,6 +119,10 @@
 			</div><!-- /.page -->
 		</div><!-- /.pages -->
 	</div><!-- /main -->
+
+	<div id="chat">
+{% include "chat/_chat.html" %}
+	</div>
 </div> <!-- /.gitter -->
 
 
@@ -125,6 +132,7 @@ var BRANCH = "{{ branch_name }}";
 var PATH = "{{path}}";
 var STRATUS_MEDIA_URL = "{{ STRATUS_MEDIA_URL }}";
 var BASE_URL = "{% url stratus-repos %}";
+var USER_NAME = "{{ user }}";
 
 {% if repo_name and branch_name %}
 var UPLOAD_URL = "{% url stratus-upload-file repo_name branch_name %}";
@@ -135,7 +143,6 @@ var tree_path =  {% if path %} '{% url stratus-tree-view repo_name branch_name p
 {% else %} '{% url stratus-tree-view repo_name branch_name "" %}' {% endif %};
 
 {% endif %}
-
 </script>
 
 

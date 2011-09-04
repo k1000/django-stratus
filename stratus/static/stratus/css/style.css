@@ -217,7 +217,7 @@ img.gravatar {
 }
 .message {
 	float: left;
-	color: black;
+	/*color: black;*/
 }
 .commit{
     overflow: hidden;
@@ -506,4 +506,90 @@ button.delete {
 }
 .prev button {
 	margin-bottom: 0;
+}
+
+/* ---------- CHAT -------------- */
+#chat {
+  background: black;
+  width: 270px;
+  float: right;
+}
+#loading, #connect {
+  background: #22252a;
+  top: 0;
+  left: 0;
+  padding: 1em;
+}
+
+#loading { z-index: 10000000; }
+#connect { z-index: 10000001; }
+
+#loading p, #connect fieldset  {
+  font-family: DejaVu Sans Mono, fixed; 
+  width: 30em;
+  border: 0;
+}
+
+#toolbar {
+  color: #fff;
+  bottom: 0;
+  background: #733;
+}
+
+#entry {
+  width: 100%;
+  font-size: inherit;
+  padding: 1em;
+  margin: 0;
+  border-width: 0;
+  outline-width: 0;
+  clear: both;
+}
+
+#log {
+  display: block;
+  /* enough padding to clear the toolbar.. is there a better way to do this? */
+  padding-bottom: 5.1em; 
+  background: inherit;
+  overflow: hidden;
+}
+
+/* not very important info */
+.notice td, .join td, .part td, .message .date { color: #555; }
+.error td { color: #933; }
+.personal .nick, .notice .nick { color: #cd5; }
+
+#chat .message {
+  margin: 0.1em 0;
+  float: left;
+  clear: both;
+}
+
+.message td {
+  vertical-align: top;
+}
+
+.nick { 
+  font-weight: bold;
+  padding: 0 1em 0 0.5em;
+}
+
+.nick a {
+  color: inherit;
+}
+
+#toolbar ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#toolbar li {
+  display: block; 
+  float: left;
+  margin: 0 2em 0 0;
+}
+
+#usersLink {
+  color: inherit;
 }
