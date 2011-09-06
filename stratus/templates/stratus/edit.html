@@ -4,7 +4,7 @@
 {% block git_breadcrumbs %}
 	<li><a href="{% url stratus-tree-view repo_name branch_name "" %}" class="ajax" rel="index">//</a> </li>
 	{% for crumb, path in breadcrumbs %}
-    <li><a href="{% url stratus-tree-view repo_name branch_name path %}" class="ajax" rel="index" >{{crumb}}/</a> 
+    <li><a href="{% url stratus-tree-view repo_name branch_name path %}" class="ajax" rel="index" >{{crumb}}/</a></li>
 	{% endfor %}
 {% endblock git_breadcrumbs %}
 

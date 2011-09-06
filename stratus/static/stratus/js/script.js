@@ -1,15 +1,9 @@
 var editors = null;
+
 $(document).ready( function(){
 	// initialize from history
 	//http://tkyk.github.com/jquery-history-plugin/#demos
-	function loadContent(hash) {
-	    if(hash != "") {
-	        //pages.new_page( hash +".html" );
-	    } else {
-	    	
-	    	
-		}
-	}
+
 	// initialize pages
 	
 	var pages = new PageManager($("#pages"));
@@ -17,14 +11,9 @@ $(document).ready( function(){
 	var pagae1 = $(".page").html();
 	$(".page").remove();
 	var editors = new EditorManager();
-	
 	var loc = window.location.pathname;
 
-	pages.new_page( loc, pagae1 );
-	// give current page id
-	//$(".page").attr("id", pages.mk_page_id( document.location.href ) );
-	tabs.mk_tab( loc , $(".page h2").html() );
-	//$.history.init(loadContent);
+	pages.new_page( loc, $(".page h2").html() ,pagae1 );
 
 	if(window.tree_path){
 		var file_browser = new FileBrowserManager( tree_path );
@@ -34,7 +23,7 @@ $(document).ready( function(){
 	$(document).bind('page_created', function(e, data) { 
 	    send("page "+ data.url + " created");
 	} );
-	$(document).bind('page_created', function(e, data) { 
+	$(document).bind('page_edit', function(e, data) { 
 	    send("page "+ data.url + " created");
 	} );
 
@@ -55,9 +44,9 @@ $(document).ready( function(){
 		var url = NEW_FILE_URL
 			+ dir
 			+ document.getElementById("new_file_name").value;
-		pages.hide_current();
-		tabs.mk_tab(url, "new file "+ url );
-		pages.open_page( url, function(url, data){ 
+		//pages.hide_current();
+		//tabs.mk_tab(url, "new file "+ url );
+		pages.open_page( url, "new file "+ url, function(url, data){ 
 			editors.mk( url );
 		});
 	})
@@ -72,16 +61,15 @@ $(document).ready( function(){
 		get_page(url, "#messages");
 	})
 
-	// ----------------- OPEN URL --------------------
+	// ----------------- OPEN PREVIEW --------------------
 	$("#open_preview").click( function(){
 		var url = this.href;
-		tabs.mk_tab(url, url );
-		pages.hide_current();
 		var tmp= $("#url_template").html().replace("sssss", url );
-		var new_page = pages.new_page( url, tmp );
+		var new_page = pages.new_page( url, url, tmp );
 		return false
 	});
 
+	// ----------------- OPEN URL --------------------
 	$('#content').delegate('.go', 'click', function(event) {
 		var self = $(this);
 		var src = self.prev().attr("value");
@@ -106,20 +94,19 @@ $(document).ready( function(){
 			// if its the same page do nothing
 			if ( url != pages.current) {
 				// hide current page
-				pages.hide_current();
+				
 				//show if page is already loaded
 				if ( pages.pages[url] ){
-					tabs.activate_tab(url);
+					//tabs.activate_tab(url);
 					pages.show_page(url);
 				//open new page
 				} else {
-					tabs.mk_tab(url, title);
 					if (rel == "edit" ) {
-						pages.open_page( url, function(url, data){ 
-							editors.mk( url );
+						pages.open_page( url, title, function(url, data, page){ 
+							editors.mk( url, page );
 						});
 					} else {
-						pages.open_page( url );
+						pages.open_page( url, title );
 					}
 				}				
 			}
@@ -136,13 +123,6 @@ $(document).ready( function(){
 		}
 	}
 
-	function str_replace( str, replacer ){
-		for (replace in replacer) {
-			str = str.replace("{{"+replace+"}}", replacer[replace]);
-		};
-		return str
-	}
-
 	// ----------------- COMMANDS --------------------
 	function reload_window( data ) { location.reload(true) };
 
@@ -152,6 +132,7 @@ $(document).ready( function(){
 		activate_branch: { str:"git checkout {{name}}", param:["name"], callback:reload_window },
 		delete_branch: { str:"git branch -D {{name}}", param:["name"], callback:reload_window }
 	}
+
 	$(document).delegate('.cmd', 'click', function(event) {
 		event.preventDefault()
 		var command = git_commands[this.name];
@@ -287,18 +268,17 @@ $(document).ready( function(){
 			show_messages( data.msg );
 		}
 		if ( rel == "contents" ) {
-			pages.hide_current();
-			pages.new_page( url, data.html );
 			var tab_text = $(data.html).find("h1").text().replace('"', "");
 			tabs.mk_tab(url, tab_text);
+			pages.new_page( url, tab_text, data.html );
 		} else if ( rel == "edit" ) {
-			pages.hide_current();
-			pages.open_page( url, function(url, data){ 
-				editors.mk( url );
+			var tab_text = $(data.html).find("h1").text().replace('"', "");
+			pages.open_page( url, tab_text, function(url, data, page){ 
+				editors.mk( url, page );
 				this.page_container.trigger("page_edit", { "url":url });
 			});
-			var tab_text = $(data.html).find("h1").text().replace('"', "");
-			tabs.mk_tab(url, tab_text);
+			
+			//tabs.mk_tab(url, tab_text);
 		} else {
 			$(rel).html( data.html );
 		}
@@ -397,6 +377,7 @@ function FileBrowserManager( path ){
 function TabManager( tab_container, pages ){
 	this.tab_container = tab_container;
 	this.pages = pages;
+	this.pages.tabber = this;
 	this.current = previous = next = "";
 	var self = this;
 
@@ -407,7 +388,7 @@ function TabManager( tab_container, pages ){
 		if (tab_url != self.pages.current) {
 			self.deactivate_tabs();
 			tab.addClass("active");
-			self.pages.hide_current();
+			//self.pages.hide_current();
 			self.pages.show_page(tab.find("a.tab").attr("href"));
 		}
 		return false
@@ -449,9 +430,9 @@ function TabManager( tab_container, pages ){
 function EditorManager( options ){
 	this.editors = {};
 	this.modes = [];
-	this.mk = function( url, mode, options ){
+	this.mk = function( url, page, mode, options ){
 
-		var text_area = $("form[action='"+ url +"'] textarea[name=file_source]");
+		var text_area = page.find("textarea[name=file_source]");
 		
 		if (text_area.length > 0){
 			/*
@@ -492,17 +473,20 @@ function EditorManager( options ){
 }
 
 
-function PageManager( page_container, tabber, options ){
+function PageManager( page_container, options ){
 	this.current = "";
 	this.page_container = page_container;
 	this.pages = {};
 	this.transition = false;
-	this.tabber = tabber;
-	this.new_page = function( url, data ){
+	this.tabber = null;
+
+	this.new_page = function( url, title, data ){
 		// creates page from data and returns it
 		var id = this.mk_page_id( url );
 		this.pages[url] = id;
 		this.set_current( url );
+		this.tabber.mk_tab(url, title );
+
 		var new_page = $("<div class='page' id='" + id + "' >" + data + "</div>").appendTo(this.page_container);
 		this.page_container.trigger("page_created", {'sender': new_page, "url":url });
 		return new_page
@@ -534,15 +518,17 @@ function PageManager( page_container, tabber, options ){
 		// returns current page
 		return $("#"+this.pages[ this.current ])
 	}
-	this.open_page = function( url, call_back ){
+	this.open_page = function( url, title, call_back ){
 		// opens page from url
 		var self = this;
 		var url = url;
 		var call_back = call_back;
+		//this.tabber.mk_tab( url, title );
+		this.hide_current();
 		$.get(url, function(data) {
-			self.new_page(url, data.html );
+			var page = self.new_page(url, title, data.html );
 			if (call_back ) {
-				call_back( url, data)
+				call_back( url, data, page)
 			}
 		}, "json")
 	}
@@ -555,10 +541,23 @@ function PageManager( page_container, tabber, options ){
 		});
 	}
 	this.show_page = function( url ){
+		this.tabber.activate_tab(url);
+		this.hide_current();
 		var page = this.get_page( url ).show();
 		this.set_current( url );
 	}
 }
+
+
+
+function str_replace( str, replacer ){
+	// replace {{ in string }}
+	for (replace in replacer) {
+		str = str.replace("{{"+replace+"}}", replacer[replace]);
+	};
+	return str
+}
+	
 
 // http://www.nczonline.net/blog/2009/07/28/the-best-way-to-load-external-javascript/
 function loadScript(url, callback){
