@@ -5,7 +5,6 @@ $(document).ready( function(){
 	//http://tkyk.github.com/jquery-history-plugin/#demos
 
 	// initialize pages
-	
 	var pages = new PageManager($("#pages"));
 	var tabs = new TabManager($("ul.tabs"), pages);
 	var pagae1 = $(".page").html();
@@ -20,10 +19,10 @@ $(document).ready( function(){
 	}
 
 	// --------------- MESSAGE EVENTS --------------------
-	$(document).bind('page_created', function(e, data) { 
+	$(document).bind('page_created', function(e, data, page) { 
 	    send("page "+ data.url + " created");
 	} );
-	$(document).bind('page_edit', function(e, data) { 
+	$(document).bind('page_edit', function(e, data, page) { 
 	    send("page "+ data.url + " created");
 	} );
 
@@ -58,7 +57,7 @@ $(document).ready( function(){
 		var url = NEW_FOLDER_URL
 			+ dir
 			+ document.getElementById("new_folder_name").value;
-		get_page(url, "#messages");
+		get_ajax(url, "#messages");
 	})
 
 	// ----------------- OPEN PREVIEW --------------------
@@ -113,13 +112,13 @@ $(document).ready( function(){
 		//load in current page
 		} else if (rel == "current" || rel == "prev" || rel == "next") {
 			var current = $(self).parents(".page");
-			get_page(url, current);
+			get_ajax(url, current);
 		//syncronize file browser
 		} else if (rel == "index" ) {
 			file_browser.open( url );
 		//load in arbitrary container
 		} else {
-			get_page(url, $(rel));
+			get_ajax(url, $(rel));
 		}
 	}
 
@@ -202,23 +201,7 @@ $(document).ready( function(){
 	})
 
 	// -------------------- EDIT  --------------------
-	$(document).delegate('form.ajax_editor .button', 'click', function(event) {
-		event.preventDefault();
-		var self = $(this);
-		var form = self.parents("form");
-		var url = form.attr("action");
-		editors.save(url);
-		
-		$.ajax({
-			type: "post",
-			url: url,
-			data: form.serialize(),
-			dataType: "json",
-			success: function(data){
-				if ( data.msg ) show_messages( data.msg );
-			}
-		});
-	})
+	
 
 	// ----------------- FORMS --------------------
 	$(document).delegate('form.ajax button', 'click', function(event) {
@@ -315,7 +298,7 @@ function get_prev_next( obj, current ) {
 	return prev_next
 }
 
-function get_page(url, rel, callback){
+function get_ajax(url, rel, callback){
 	var rel = rel;
 	var url = url; 
 	var callback = callback; 
@@ -333,7 +316,7 @@ function FileBrowserManager( path ){
 	this.current_dir = "";
 	// http://valums.com/ajax-upload/
 
-	get_page(path, this.container);
+	get_ajax(path, this.container);
 
 	this.set_uploader = function( dir ){
 		var dir = dir;
@@ -363,7 +346,7 @@ function FileBrowserManager( path ){
 	this.open = function( url ){
 		var self = this;
 		this.current_path = url;
-		get_page(url, this.container, function(url, rel, data){
+		get_ajax(url, this.container, function(url, rel, data){
 			var dir = data.path
 			if ( dir != self.current_dir ){
 				self.current_dir = dir;
@@ -430,6 +413,28 @@ function TabManager( tab_container, pages ){
 function EditorManager( options ){
 	this.editors = {};
 	this.modes = [];
+	
+	this.connect = function( page ){
+	    var editor = this;
+    	page.delegate('form.ajax_editor .button', 'click', function(event) {
+    		event.preventDefault();
+    		var self = $(this);
+    		var form = self.parents("form");
+    		var url = form.attr("action");
+    		editor.save(url);
+		
+    		$.ajax({
+    			type: "post",
+    			url: url,
+    			data: form.serialize(),
+    			dataType: "json",
+    			success: function(data){
+    				if ( data.msg ) show_messages( data.msg );
+    			}
+    		});
+    	})
+    }
+	
 	this.mk = function( url, page, mode, options ){
 
 		var text_area = page.find("textarea[name=file_source]");
@@ -449,6 +454,7 @@ function EditorManager( options ){
 				indentUnit: 4
 			});
 			this.editors[url] = code_mirror;
+			this.connect( page )
 		}
 	}
 
@@ -483,18 +489,16 @@ function PageManager( page_container, options ){
 	this.new_page = function( url, title, data ){
 		// creates page from data and returns it
 		var id = this.mk_page_id( url );
-		this.pages[url] = id;
 		this.set_current( url );
 		this.tabber.mk_tab(url, title );
 
 		var new_page = $("<div class='page' id='" + id + "' >" + data + "</div>").appendTo(this.page_container);
 		this.page_container.trigger("page_created", {'sender': new_page, "url":url });
+		this.pages[url] = new_page;
 		return new_page
 	}
 	this.rm_page = function( url ){
-		$("#"+this.get_page_id(url))
-			.trigger("page_removed", {url:url})
-			.remove();
+		this.pages[url].remove();
 		delete this.pages[url]
 	}
 	this.mk_page_id = function( url ){
@@ -504,19 +508,13 @@ function PageManager( page_container, options ){
 		this.page_container.trigger("current_page", {url:url})
 		this.current = url;
 	}
-	this.get_page_id = function( url ){
-		return this.pages[url]
-	}
-	this.get_current_id = function( ){
-		return this.pages[ this.current ]
-	}
 	this.get_page = function( url ){
 		// returns page content by its url
-		return $("#"+this.pages[ url ])
+		return this.pages[url]
 	}
 	this.get_current = function( ){
 		// returns current page
-		return $("#"+this.pages[ this.current ])
+		return this.pages[ this.current ]
 	}
 	this.open_page = function( url, title, call_back ){
 		// opens page from url
@@ -550,12 +548,13 @@ function PageManager( page_container, options ){
 
 
 
-function str_replace( str, replacer ){
+function str_replace( text, replacer ){
 	// replace {{ in string }}
+
 	for (replace in replacer) {
-		str = str.replace("{{"+replace+"}}", replacer[replace]);
+		text = text.replace("{{"+replace+"}}", replacer[replace]);
 	};
-	return str
+	return text
 }
 	
 

@@ -1,4 +1,16 @@
-/* @override http://127.0.0.1:8000/static/stratus/css/style.css */
+/* @override 
+	http://127.0.0.1:8000/static/stratus/css/style.css
+	http://127.0.0.1:8002/static/stratus/css/style.css
+*/
+/* #GENERIC
+================================================== */
+body, html {
+	font: 84%/1.4em"Lucida Grande", Lucida, Verdana, sans-serif;
+}
+
+body{
+	margin: 0;
+}
 
 /* #Buttons
 ================================================== */
@@ -510,9 +522,10 @@ button.delete {
 
 /* ---------- CHAT -------------- */
 #chat {
-  background: black;
+  background: #e0e0e0;
   width: 270px;
   float: right;
+  box-shadow: 0px 0px 6px #c2cdd7;
 }
 #loading, #connect {
   background: #22252a;
@@ -533,7 +546,7 @@ button.delete {
 #toolbar {
   color: #fff;
   bottom: 0;
-  background: #733;
+  background: #50575d;
 }
 
 #entry {
@@ -556,7 +569,7 @@ button.delete {
 /* not very important info */
 .notice td, .join td, .part td, .message .date { color: #555; }
 .error td { color: #933; }
-.personal .nick, .notice .nick { color: #cd5; }
+.personal .nick, .notice .nick { color: #6caeb8; }
 
 #chat .message {
   margin: 0.1em 0;
@@ -564,7 +577,12 @@ button.delete {
   clear: both;
 }
 .msg-text {
-  color: white;
+  color: #2e2e2e;
+  background: white;
+  padding: 3px 12 px;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  border-radius: 12px;
 }
 .message td {
   vertical-align: top;
@@ -593,4 +611,7 @@ button.delete {
 
 #usersLink {
   color: inherit;
+}
+#chat input{
+	background: gray;
 }
