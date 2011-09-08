@@ -2,6 +2,7 @@
 	http://127.0.0.1:8000/static/stratus/css/style.css
 	http://127.0.0.1:8002/static/stratus/css/style.css
 */
+
 /* #GENERIC
 ================================================== */
 body, html {
@@ -527,22 +528,6 @@ button.delete {
   float: right;
   box-shadow: 0px 0px 6px #c2cdd7;
 }
-#loading, #connect {
-  background: #22252a;
-  top: 0;
-  left: 0;
-  padding: 1em;
-}
-
-#loading { z-index: 10000000; }
-#connect { z-index: 10000001; }
-
-#loading p, #connect fieldset  {
-  font-family: DejaVu Sans Mono, fixed; 
-  width: 30em;
-  border: 0;
-}
-
 #toolbar {
   color: #fff;
   bottom: 0;
@@ -569,23 +554,42 @@ button.delete {
 /* not very important info */
 .notice td, .join td, .part td, .message .date { color: #555; }
 .error td { color: #933; }
-.personal .nick, .notice .nick { color: #6caeb8; }
+.personal .nick, .notice .nick { color: #49759c; }
 
 #chat .message {
   margin: 0.1em 0;
-  float: left;
   clear: both;
+  float: none;
+  overflow: hidden;
+}
+#chat .meta{
+	float: left;
+	width: 40px;
+	height: 30px;
+	text-align: center;
+	background: #eceeee;
+	margin: .3em;
+}
+#chat .info .msg-text{
+	background: #fcffe5;
+}
+#chat .self .meta,
+#chat .self .msg-text{
+  float: right;
+}
+.meta date{
+	color: gray;
 }
 .msg-text {
   color: #2e2e2e;
+  display: block;
+  float: left;
   background: white;
-  padding: 3px 12 px;
+  padding: 4px 12px;
   -moz-border-radius: 12px;
   -webkit-border-radius: 12px;
   border-radius: 12px;
-}
-.message td {
-  vertical-align: top;
+  box-shadow: 0px 0px 6px #c2cdd7;
 }
 
 .nick { 
