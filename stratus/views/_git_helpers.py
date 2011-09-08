@@ -16,6 +16,11 @@ def mk_commit(repo, message, path, ammend=True ):
         if ammend:
             cmd = GIT_AMMEND
         result_msg = git.commit(cmd + [u"""%s""" % message])
+        ChatConnection.send_msg(dict(
+            msg = result_msg
+            ,room = "local"
+            ,nick = "kam"
+        ))
         signals.commit.send(sender=repo, message=result_msg)
         #commit_result = index.commit("""%s""" % message)
     except GitCommandError, e:

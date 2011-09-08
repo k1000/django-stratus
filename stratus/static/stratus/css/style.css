@@ -547,7 +547,7 @@ button.delete {
 #log {
   display: block;
   /* enough padding to clear the toolbar.. is there a better way to do this? */
-  height: 20em;
+  height: 30em;
   overflow: auto;
 }
 

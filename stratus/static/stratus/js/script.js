@@ -19,11 +19,11 @@ $(document).ready( function(){
 	}
 
 	// --------------- MESSAGE EVENTS --------------------
-	$(document).bind('page_created', function(e, data, page) { 
-	    send("page "+ data.url + " created");
+	$(document).bind('page_created', function(e, data, page) {
+	    ws.send( {msg:"page "+ data.url + " opened", nick:USER_NAME, room:REPO, type:"info" });
 	} );
 	$(document).bind('page_edit', function(e, data, page) { 
-	    send("page "+ data.url + " created");
+		ws.send( {msg:"page "+ data.url + " edited", nick:USER_NAME, room:REPO, type:"info" });
 	} );
 
 	// ------------------- TOGGLE --------------------

@@ -223,7 +223,7 @@ def edit(request, repo_name, branch=REPO_BRANCH, path=None ):
             if file_writen:
                 msgs.append( "File has been saved" )
                 message = form.cleaned_data["message"]
-                ammend = form.cleaned_data["ammend"]
+                ammend = form.cleaned_data.get("ammend", None)
                 msg = mk_commit(repo, message, file_path, ammend )
                 msgs.append( msg )
             else:
